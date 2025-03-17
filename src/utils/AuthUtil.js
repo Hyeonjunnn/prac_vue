@@ -110,4 +110,4 @@ const logoutProcess = async (callback) => {
 
 // }
 
-export { isMatchToRole, getUserInfo, loginProcess, logoutProcess }
+export { getUserInfo, loginProcess, logoutProcess }

@@ -8,7 +8,6 @@ import PostList from '@/pages/Post/PostList.vue';
 import AddPost from '@/pages/Post/AddPost.vue';
 import EditPost from '@/pages/Post/EditPost.vue';
 import NotFound from '@/pages/NotFound.vue';
-import { isMatchToRole } from '@/utils/AuthUtil.js';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -24,11 +23,5 @@ const router = createRouter({
         { path: '/:paths(.*)*', component: NotFound },
     ]
 })
-
-// router.beforeEach((to) => {
-//     if (!isMatchToRole(to.path)) {
-//         return { name: 'login', query: { fromname: to.name } };
-//     }
-// })
 
 export default router;
