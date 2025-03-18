@@ -7,16 +7,12 @@
     <div class="row">
         <div class="col">
             <div class="form-group">
-                <label htmlFor="postTitle">제목:</label>
-                <input type="text" class="form-control" id="postTitle" v-model="postItem.title" />
+                <label htmlFor="title">게시글 제목:</label>
+                <input type="text" class="form-control" id="title" v-model="postItem.title" />
             </div>
             <div class="form-group">
-                <label htmlFor="postContent">설명:</label>
-                <textarea class="form-control" rows="3" id="postContent" v-model="postItem.content"></textarea>
-            </div>
-            <div class="form-group">
-                <label htmlFor="done">완료여부 : </label>&nbsp;
-                <input type="checkbox" v-model="postItem.done" />
+                <label htmlFor="content">게시글 설명 :</label>
+                <textarea class="form-control" rows="3" id="content" v-model="postItem.content"></textarea>
             </div>
             <div class="form-group">
                 <button type="button" class="btn btn-primary m-1" @click="updatePostHandler">
@@ -30,35 +26,62 @@
     </div>
 </template>
 
-<script setup>
-import { inject, reactive } from 'vue';
+<script>
+import { ref, inject, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import axios from 'axios';
+import { getUserInfo, refreshToken } from '@/utils/AuthUtil.js';
 
-const router = useRouter();
-const currentRoute = useRoute();
+export default {
+    name: 'EditPost',
+    data() {
+        return {
+            postItem: {
+                no: 0,
+                title: "",
+                content: ""
+            }
+        }
+    },
+    setup() {
+        const router = useRouter();
+        return { router };
+    },
+    mounted() {
+        this.fetchPostOne();
+    },
+    methods: {
+        async fetchPostOne() {
+            const route = useRoute();
+            const postNo = ref(route.params.postNo).value;
+            console.log(postNo);
+            const url = `http://localhost:8087/posts/${postNo}/with-comments`;
+            const response = await axios.get(url);
+            this.postItem = response.data;
+        },
+        async updatePost() {
+            const url = `http://localhost:8087/posts/${postNo}`;
+            const data = {
+                title: this.postItem.title,
+                content: this.postItem.content
+            };
+            const token = getUserInfo().accessToken;
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            };
 
-const postList = inject('postList', []);
-const actions = inject('actions', {});
-const { updatePost } = actions;
+            const response = await axios.put(url, data, config);
 
-const matchedPostItem = postList.value.find((postItem)=> postItem.postNo === parseInt(currentRoute.params.id))
-if (!matchedPostItem)  { 
-    router.push('/posts'); 
-}
-const postItem =  reactive({ ...matchedPostItem })
-
-const updatePostHandler = () => {
-    let { postTitle } = postItem;
-    if (!postTitle || postTitle.trim()==="") {
-        alert('제목은 반드시 입력해야 합니다');
-        return;
+            if (response.status === 200) {
+                alert('게시글이 수정되었습니다');
+                this.router.push('/posts');
+            } else {
+                alert('게시글 수정 실패');
+            }
+        }
     }
-    updatePost({ ...postItem }, ()=>{
-        router.push('/posts');
-    });
 }
 </script>
-
-<style scoped>
-
-</style>

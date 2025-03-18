@@ -19,7 +19,7 @@ const router = createRouter({
         { path: '/about', component: About },
         { path: '/posts', component: PostList },
         { path: '/posts/add', component: AddPost },
-        { path: '/posts/:id', component: EditPost },
+        { path: '/posts/:postNo', component: EditPost },
         { path: '/:paths(.*)*', component: NotFound },
     ]
 })
