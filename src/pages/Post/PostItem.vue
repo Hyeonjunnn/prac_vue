@@ -1,6 +1,7 @@
 <template>
     <li :class="postItem.done ? 'list-group-item list-group-item-success' : 'list-group-item'">
-        <span :class="postItem.done ? 'todo-done pointer' : 'pointer'">
+        <span :class="postItem.done ? 'todo-done pointer' : 'pointer'" 
+        @click="router.push(`/posts/${postItem.postNo}`, {postNo: postItem.postNo})">
         게시글 번호: {{ postItem.postNo }},<br>
         제목: {{ postItem.title }},<br>
         내용: {{ postItem.content }},<br>

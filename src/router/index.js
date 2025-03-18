@@ -7,6 +7,7 @@ import About from '@/pages/About.vue';
 import PostList from '@/pages/Post/PostList.vue';
 import AddPost from '@/pages/Post/AddPost.vue';
 import EditPost from '@/pages/Post/EditPost.vue';
+import PostDetail from '@/pages/Post/PostDetail.vue';
 import NotFound from '@/pages/NotFound.vue';
 
 const router = createRouter({
@@ -19,7 +20,8 @@ const router = createRouter({
         { path: '/about', component: About },
         { path: '/posts', component: PostList },
         { path: '/posts/add', component: AddPost },
-        { path: '/posts/:postNo', component: EditPost },
+        { path: '/posts/:postNo', name: 'EditPost', component: EditPost },
+        { path: '/posts/:postNo', name: 'PostDetail', component: PostDetail },
         { path: '/:paths(.*)*', component: NotFound },
     ]
 })
