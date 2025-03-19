@@ -9,6 +9,7 @@ import AddPost from '@/pages/Post/AddPost.vue';
 import EditPost from '@/pages/Post/EditPost.vue';
 import PostDetail from '@/pages/Post/PostDetail.vue';
 import NotFound from '@/pages/NotFound.vue';
+import ProjectList from '@/pages/Project/ProjectList.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -22,6 +23,7 @@ const router = createRouter({
         { path: '/posts/add', component: AddPost },
         { path: '/posts/:postNo', name: 'EditPost', component: EditPost },
         { path: '/posts/:postNo', name: 'PostDetail', component: PostDetail },
+        { path: '/projects', name: 'ProjectList', component: ProjectList },
         { path: '/:paths(.*)*', component: NotFound },
     ]
 })

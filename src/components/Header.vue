@@ -22,6 +22,16 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link class="nav-link" to="/posts">
+              TeamList
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/projects">
+              ProjectList
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link class="nav-link" to="/login">
               Login
             </router-link>
