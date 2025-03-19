@@ -22,7 +22,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="messages">
+            <router-link class="nav-link" to="/messages/list">
                 쪽지
             </router-link>
           </li>

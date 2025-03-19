@@ -7,9 +7,9 @@
             <p><strong>보낸 시간:</strong> {{ message.sendAt }}</p>
             <p><strong>내용:</strong> {{ message.content }}</p>
 
-            <div>
-                <span class="status">{{ message.isRead ? "읽음" : "읽지 않음" }}</span>
-            </div>
+            <!-- <div>
+                <span class="status">{{ message.read ? "읽음" : "읽지 않음" }}</span>
+            </div> -->
 
             <div class="actions">
                 <button @click="deleteMessage">삭제</button>
@@ -22,16 +22,16 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import axios from 'axios';
+import { getUserInfo } from '../../utils/AuthUtil';
 
 export default {
     setup() {
         const route = useRoute();
         const router = useRouter();
         const messageNo = route.params.messageNo; // 라우트에서 messageNo 가져오기
-
         const message = ref(null); // 반응형 변수 선언
 
         const fetchMessageDetails = async () => {
@@ -39,9 +39,18 @@ export default {
                 console.error("messageNo가 없습니다.");
                 return;
             }
+
             try {
-                const response = await axios.get(`http://localhost:3011/messages/${messageNo}`); // RESTful URL로 요청
+                const token = getUserInfo().accessToken;
+                console.log(token);
+                const config = {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                }
+                const response = await axios.get(`http://localhost:8087/messages/${messageNo}`, config);
                 message.value = response.data;
+
             } catch (error) {
                 console.error("쪽지 조회 실패:", error);
             }
@@ -49,8 +58,8 @@ export default {
 
         const deleteMessage = async () => {
             try {
-                await axios.delete(`http://localhost:3011/messages/${messageNo}`);
-                router.push('/messages'); // 삭제 후 목록으로 이동
+                await axios.delete(`http://localhost:8087/messages/${messageNo}`);
+                router.push('/messages/list'); // 삭제 후 목록으로 이동
             } catch (error) {
                 console.error("쪽지 삭제 실패:", error);
             }
