@@ -22,7 +22,7 @@ import axios from 'axios';
 import PostItem from '@/pages/Post/PostItem.vue';
 
 export default {
-    name: 'postList',
+    name: 'PostList',
     components: {
         PostItem
     },

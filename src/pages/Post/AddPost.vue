@@ -45,10 +45,10 @@
 import { inject, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { getUserInfo } from '@/utils/AuthUtil.js';
+import { getUserInfo, refreshToken } from '@/utils/AuthUtil.js';
 
 export default {
-    name: 'addPost',
+    name: 'AddPost',
     data() {
         return {
             postItem: {

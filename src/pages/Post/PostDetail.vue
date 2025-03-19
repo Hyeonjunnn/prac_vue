@@ -12,20 +12,20 @@
             </div>
             <div class="form-group">
                 <label htmlFor="title">게시글 제목:</label>
-                <input type="text" class="form-control" id="title" v-model="postItem.title" />
+                <input type="text" class="form-control" id="title" v-model="postItem.title" readonly/>
             </div>
             <div class="form-group">
                 <label htmlFor="content">게시글 설명 :</label>
-                <textarea class="form-control" rows="3" id="content" v-model="postItem.content"></textarea>
+                <textarea class="form-control" rows="3" id="content" v-model="postItem.content" readonly></textarea>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <button type="button" class="btn btn-primary m-1" @click="updatePost">
                 수 정
                 </button>
                 <button type="button" class="btn btn-primary m-1" @click="router.push('/posts')">
                 취 소
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -38,7 +38,7 @@ import { getUserInfo, refreshToken } from '@/utils/AuthUtil.js';
 import { title } from '@tailus/themer';
 
 export default {
-    name: 'EditPost',
+    name: 'PostDetail',
     props: {
         postItem: {
             postNo: Number,
