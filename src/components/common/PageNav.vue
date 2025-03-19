@@ -2,7 +2,7 @@
   <!-- 페이징 버튼 -->
   <div class="flex flex-col items-center px-5 py-5 bg-white border-t xs:flex-row xs:justify-between">
     <div class="flex mr-4 rounded">
-      <a href="#" @click="prevPage(post.no)" class="px-3 py-2 ml-0 leading-tight text-indigo-700 bg-white border border-r-0 border-gray-200 rounded-l hover:bg-indigo-500 hover:text-white"
+      <a href="#" @click="prevPage()" class="px-3 py-2 ml-0 leading-tight text-indigo-700 bg-white border border-r-0 border-gray-200 rounded-l hover:bg-indigo-500 hover:text-white"
         ><span>Previous</span></a
       >
       <a

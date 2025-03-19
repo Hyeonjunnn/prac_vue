@@ -11,57 +11,66 @@
     </div>
 
     <!-- 검색바 -->
-    <div>
-      <div class="search-bar">
-        <div class="flex">
-          <div class="relative">
-            <select v-model="size" @change="fetchPostList" class="select-box">
-              <option>10</option>
-              <option>20</option>
-              <option>30</option>
-            </select>
-          </div>
-          <div class="relative">
-            <select v-model="postSortOption" @change="fetchPostList" class="select-box">
-              <option value="LATEST">최신순</option>
-              <option value="BOOKMARK">북마크</option>
-              <option value="VIEW">조회수</option>
-              <option value="COMMENT">댓글</option>
-            </select>
-          </div>
-          <div class="relative">
-            <select v-model="selectOption" class="select-box">
-              <option value="">전체</option>
-              <option value="TITLE">제목</option>
-              <option value="CONTENT">내용</option>
-              <option value="USERNAME">유저이름</option>
-            </select>
-          </div>
-        </div>
-        <div class="relative block mt-2 sm:mt-0">
-          <input v-model="searchQuery" @keydown.enter="fetchPostList" placeholder="검색어를 입력해주세요" class="search-input" />
-        </div>
-      </div>
-    </div>
+    <SearchBar
+      :size-options="sizeOptions"
+      :post-sort-options="postSortOptions"
+      :select-options="selectOptions"
+      @search="handleSearch"
+    />
 
     <!-- 테이블 -->
-    <ListTable v-if="postList.content && postList.content.length > 0" :posts="postList.content" />
+    <ListTable
+      v-if="postList.content && postList.content.length > 0" 
+      :posts="postList.content"
+      />
     <div v-else class="text-center mt-4">검색 결과가 없습니다.</div>
 
+    <div class="main-container">
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table class="custom-table">
+          <!-- 제목 -->
+          <thead class="table-header">
+            <tr>
+              <th class="header-cell">번호</th>
+              <th class="header-cell">제목</th>
+              <th class="header-cell">글쓴이</th>
+              <th class="header-cell">작성일</th>
+            </tr>
+          </thead>
+          <!-- 내용 -->
+          <tbody>
+            <tr v-for="(post, i) in paginatedPosts" :key="i" @click="ditailePage(post.postNo)" class="table-row">
+              <td class="body-cell">{{ post.postNo }}</td>
+              <td class="body-cell">{{ post.title }}</td>
+              <td class="body-cell">{{ post.userName }}</td>
+              <td class="body-cell">{{ new Date(post.createdAt).toLocaleDateString() }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
     <!-- 페이징 -->
-    <PageNav v-if="postList.content && postList.content.length > 0" :current-page="page" :items-per-page="parseInt(size)" :total-pages="postList.totalPages" @set-page="setPage" />
+    <PageNav
+    v-if="postList.content && postList.content.length > 0" :current-page="page"
+    :items-per-page="parseInt(size)"
+    :total-pages="postList.totalPages"
+    @set-page="setPage"
+    />
   </div>
 </template>
 
 <script>
-import ListTable from "@/components/post/ListTable.vue";
-import PageNav from "@/components/post/PageNav.vue";
+import PageNav from "@/components/common/PageNav.vue";
+import SearchBar from "@/components/common/SearchBar.vue";
 import axios from "axios";
 export default {
   name: "PostView",
   components: {
-    ListTable,
     PageNav,
+    SearchBar,
   },
   data() {
     return {
@@ -74,7 +83,32 @@ export default {
 
       searchQuery: "", // 검색어
       selectOption: "", // 검색 옵션
+
+      paginatedPosts: [], // 페이징된 게시글
+
+      // 검색창 데이터---------------
+      // 항목 개수
+      sizeOptions: [10, 20, 30],
+      // 정렬 옵션
+      postSortOptions: [ 
+        { value: "LATEST", label: "최신순" },
+        { value: "BOOKMARK", label: "북마크" },
+        { value: "VIEW", label: "조회수" },
+        { value: "COMMENT", label: "댓글" },
+      ],
+      // 검색 옵션
+      selectOptions: [
+        { value: "", label: "전체" },
+        { value: "TITLE", label: "제목" },
+        { value: "CONTENT", label: "내용" },
+        { value: "USERNAME", label: "유저이름" },
+      ],
     };
+  },
+  computed: {
+    paginatedPosts() {
+      return this.postList.content || []; // 추가
+    },
   },
   mounted() {
     // 컴포넌트가 마운트 될 때 실행되는 라이프사이클 훅
@@ -118,7 +152,6 @@ export default {
           // 오류 발생 시 postList 초기화 및 페이지 번호 초기화
           this.postList = {content: []};
           this.page = 1;
-          this.fetchPostList(); // 데이터 재 호출
         });
     },
     // 분류별로 데이터를 가져오는 메소드
@@ -132,6 +165,18 @@ export default {
     setPage(page) {
       this.page = page; // 부모 컴포넌트에서 페이지 업데이트
       this.fetchPostList(); // 데이터 재 호출
+    },
+    // 검색 컴포넌트에서 전달된 검색 조건 처리
+    handleSearch(searchParams) {
+      this.size = searchParams.size;
+      this.postSortOption = searchParams.postSortOption;
+      this.selectOption = searchParams.selectOption;
+      this.searchQuery = searchParams.searchQuery;
+      this.page = 1; // 검색 시 페이지 초기화
+      this.fetchPostList();
+    },
+    ditailePage(no) {
+      this.$router.push(`/post/${no}`);
     },
   },
 };
@@ -159,12 +204,6 @@ export default {
   background-color: #4338ca; /* indigo-500 */
 }
 
-.search-bar {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-}
-
 .select-box {
   width: 100%;
   padding: 0.5rem 1rem;
@@ -178,5 +217,64 @@ export default {
   padding: 0.5rem 2rem 0.5rem 2.5rem;
   border: 1px solid #cbd5e0; /* gray-400 */
   border-radius: 0.375rem;
+}
+
+.main-container {
+  margin-top: 1rem;
+}
+
+.table-container {
+  margin-top: 1.5rem;
+}
+
+.table-wrapper {
+  margin: 1.5rem 0;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 0.375rem; /* rounded-md */
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* shadow */
+}
+
+.custom-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.table-header {
+  border-bottom: 1px solid #e5e7eb; /* border-b */
+}
+
+.header-cell {
+  padding: 0.75rem 1.25rem; /* px-5 py-3 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  text-transform: uppercase;
+  color: #f3f4f6; /* text-gray-100 */
+  background-color: #4f46e5; /* indigo-800 */
+}
+
+.table-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.table-row:hover {
+  background-color: #e5e7eb; /* hover:bg-gray-200 */
+}
+
+.body-cell {
+  padding: 1rem 1.5rem; /* px-6 py-4 */
+  font-size: 1.125rem; /* text-lg */
+  color: #6b7280; /* text-gray-500 */
+  border-bottom: 1px solid #e5e7eb; /* border-b */
+}
+
+.body-cell:first-child {
+  font-weight: 500; /* 강조를 위해 font 추가 */
+}
+
+.body-cell:hover {
+  color: #374151; /* text-gray-700 */
 }
 </style>
