@@ -9,9 +9,13 @@ import AddPost from '@/pages/Post/AddPost.vue';
 import EditPost from '@/pages/Post/EditPost.vue';
 import PostDetail from '@/pages/Post/PostDetail.vue';
 import NotFound from '@/pages/NotFound.vue';
+<<<<<<< HEAD
 import MessageCreate from '@/pages/Message/MessageCreate.vue';
 import MessageDetails from '@/pages/Message/MessageDetails.vue';
 import MessageList from '@/pages/Message/MessageList.vue';
+=======
+import ProjectList from '@/pages/Project/ProjectList.vue';
+>>>>>>> ProjectCRUD
 
 const router = createRouter({
     history: createWebHistory(),
@@ -29,6 +33,7 @@ const router = createRouter({
         { path: '/messages/:messageNo', component: MessageDetails },
         { path: '/posts/:postNo', name: 'EditPost', component: EditPost },
         { path: '/posts/:postNo', name: 'PostDetail', component: PostDetail },
+        { path: '/projects', name: 'ProjectList', component: ProjectList },
         { path: '/:paths(.*)*', component: NotFound },
     ]
 })

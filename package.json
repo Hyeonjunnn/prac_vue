@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailus/themer": "^0.1.8",
     "axios": "^1.2.1",
     "bootstrap": "^5.2.3",
     "vue": "^3.2.45",

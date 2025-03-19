@@ -22,8 +22,18 @@
             </router-link>
           </li>
           <li class="nav-item">
+<<<<<<< HEAD
             <router-link class="nav-link" to="/messages/list">
                 쪽지
+=======
+            <router-link class="nav-link" to="/posts">
+              TeamList
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/projects">
+              ProjectList
+>>>>>>> ProjectCRUD
             </router-link>
           </li>
           <li class="nav-item">
