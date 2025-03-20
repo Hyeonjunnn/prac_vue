@@ -12,7 +12,11 @@ import MessageCreate from "@/pages/Message/MessageCreate.vue";
 import MessageDetails from "@/pages/Message/MessageDetails.vue";
 import MessageList from "@/pages/Message/MessageList.vue";
 import ProjectList from "@/pages/Project/ProjectList.vue";
-import ProjectDiteil from "@/pages/Project/ProjectDiteil.vue";
+import ProjectDeteil from "@/pages/Project/ProjectDeteil.vue";
+import ProjectWrite from "@/pages/Project/ProjectWrite.vue";
+import TeamList from "@/pages/team/TeamList.vue";
+import TeamDeteil from "@/pages/team/TeamDeteil.vue";
+import TeamWrite from "@/pages/team/TeamWrite.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -28,8 +32,12 @@ const router = createRouter({
     {path: "/messages/list", component: MessageList},
     {path: "/messages/write", component: MessageCreate},
     {path: "/messages/:messageNo", component: MessageDetails},
-    {path: "/projects", name: "ProjectList", component: ProjectList},
-    {path: "/projects/:projectNo", name: "ProjectDetailt", component: ProjectDiteil},
+    {path: "/team", name: "TeamList", component: TeamList},
+    {path: "/team/:teamtNo", name: "TeamDetailt", component: TeamDeteil},
+    {path: "/team/write", name: "TeamWrite", component: TeamWrite},
+    {path: "/project", name: "ProjectList", component: ProjectList},
+    {path: "/project/:projectNo", name: "ProjectDetailt", component: ProjectDeteil},
+    {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
     {path: "/:paths(.*)*", component: NotFound},
   ],
 });
