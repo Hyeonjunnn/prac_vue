@@ -18,15 +18,17 @@
                 <div class="message-header">
                     <span class="sender">보낸 사람: {{ message.senderId }}</span>
                     <span class="receiver">받은 사람: {{ message.receiverId }}</span>
-                    <span class="date">받은 날짜: {{ formatDate(message.sendAt) }}</span>
-                </div>
-                <div class="message-content">
-                    <!-- 메시지 내용 클릭 시 상세 페이지로 이동 -->
-                    <router-link :to="`/messages/${message.no}`">
-                        <p :class="currentTab === 'sent' ? 'read' : (message.read ? 'read' : 'unread')">
-                            {{ message.content }}
-                        </p>
-                    </router-link>
+                    <span class="date">
+                        {{ currentTab === 'sent' ? '보낸 날짜' : '받은 날짜' }}: {{ formatDate(message.sendAt) }}
+                    </span>
+                    <div class="message-content">
+                        <!-- 메시지 내용 클릭 시 상세 페이지로 이동 -->
+                        <router-link :to="`/messages/${message.no}`">
+                            <p :class="currentTab === 'sent' ? 'read' : (message.read ? 'read' : 'unread')">
+                                {{ message.content.length > 50 ? message.content.substring(0, 50) + '...' : message.content }}
+                            </p>
+                        </router-link>
+                    </div>
                 </div>
 
                 <div class="message-actions">
@@ -80,6 +82,7 @@ export default {
             try {
                 const token = getUserInfo().accessToken;
                 const userNo = getUserInfo().userNo;  // 사용자 ID (No)
+
                 // 쿼리 파라미터 순서를 type=received&page=1로 수정
                 const url = `http://localhost:8087/messages/list/${type}?type=${type}&page=${page - 1}&size=${this.perPage}&sort=no,desc`;
                 const config = {
@@ -177,28 +180,35 @@ button.active {
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .message-header {
-    font-size: 14px;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .sender,
-.receiver {
+.receiver,
+.date {
     font-weight: bold;
 }
 
-.date {
-    font-style: italic;
-}
-
 .message-content {
-    margin-bottom: 10px;
+    margin-top: 10px;
+    max-width: 500px; /* 내용이 길어지면 가로 폭을 제한 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 50자 이상일 경우 '...' 표시 */
 }
 
 .message-actions button {
     margin-right: 10px;
+    white-space: nowrap; /* 텍스트를 한 줄로 표시 */
+    padding: 10px 20px; /* 버튼의 크기 조정 */
+    font-size: 14px; /* 버튼 글자 크기 조정 */
 }
 
 .pagination {
@@ -234,7 +244,6 @@ button.active {
 
 .read {
     color: #6b6b6b;
-    /* grey와 darkgrey 중간 */
 }
 
 .unread-badge {
