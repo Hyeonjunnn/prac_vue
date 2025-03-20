@@ -29,11 +29,6 @@
                     </router-link>
                 </div>
 
-                <!-- '안읽음' 표시: 받은 쪽지에만 표시 -->
-                <!-- <div v-if="currentTab === 'received' && !message.read" class="unread-status">
-                    <span class="unread">안읽음</span>
-                </div> -->
-
                 <div class="message-actions">
                     <button class="btn btn-danger" @click="deleteMessage(message.no)">삭제</button>
                 </div>
@@ -41,9 +36,13 @@
 
             <!-- 페이지네이션 -->
             <div class="pagination">
-                <button @click="loadMessages(currentTab, currentPage - 1)" :disabled="currentPage === 1">이전</button>
+                <button @click="loadMessages(currentTab, currentPage - 1)" :disabled="currentPage === 1">〈</button>
+                <button v-for="page in getPageRange()" :key="page" @click="loadMessages(currentTab, page)"
+                    :class="{ active: currentPage === page }">
+                    {{ page }}
+                </button>
                 <button @click="loadMessages(currentTab, currentPage + 1)"
-                    :disabled="currentPage === totalPages">다음</button>
+                    :disabled="currentPage === totalPages">〉</button>
             </div>
         </div>
     </div>
@@ -62,18 +61,27 @@ export default {
             totalPages: 1,  // 전체 페이지 수
             currentTab: 'received',  // 기본적으로 받은 쪽지 목록
             unreadCount: 0,  // 안 읽은 쪽지 개수
+            perPage: 10,  // 한 페이지당 표시할 메시지 수
         };
     },
     mounted() {
+        // URL에서 쿼리 파라미터로 페이지 번호를 읽어옵니다.
+        const page = this.$route.query.page || 1;  // 기본값 1로 설정
+        const type = this.$route.query.type || 'received';  // 기본값 'received'로 설정
+        this.currentPage = parseInt(page, 10);
+        this.currentTab = type;
+
+        // 로드한 페이지 번호에 맞춰 메시지 목록을 불러옵니다.
         this.loadMessages(this.currentTab, this.currentPage);
         this.getUnreadMessages();  // 안 읽은 쪽지 개수 불러오기
     },
     methods: {
-        async loadMessages(tab, page) {
+        async loadMessages(type, page) {
             try {
                 const token = getUserInfo().accessToken;
                 const userNo = getUserInfo().userNo;  // 사용자 ID (No)
-                const url = `http://localhost:8087/messages/list/${tab}?page=${page - 1}&size=10&sort=no,desc`;
+                // 쿼리 파라미터 순서를 type=received&page=1로 수정
+                const url = `http://localhost:8087/messages/list/${type}?type=${type}&page=${page - 1}&size=${this.perPage}&sort=no,desc`;
                 const config = {
                     headers: {
                         'Authorization': 'Bearer ' + token,
@@ -85,7 +93,10 @@ export default {
                     this.messages = response.data.content;  // 메시지 목록
                     this.currentPage = response.data.pageable.pageNumber + 1;  // 현재 페이지 번호
                     this.totalPages = response.data.totalPages;  // 전체 페이지 수
-                    this.currentTab = tab;  // 탭 상태 업데이트
+                    this.currentTab = type;  // 탭 상태 업데이트
+
+                    // 페이지 번호와 타입을 쿼리 파라미터에 반영
+                    this.$router.push({ query: { type: this.currentTab, page: this.currentPage } });
                 }
             } catch (error) {
                 console.error('메시지 목록 불러오기 실패:', error);
@@ -105,7 +116,7 @@ export default {
                 const response = await axios.delete(url, config);
                 if (response.status === 200) {
                     alert('메시지가 삭제되었습니다.');
-                    window.location.reload();  // 페이지 전체 새로고침
+                    this.loadMessages(this.currentTab, this.currentPage);  // 삭제 후 페이지 새로고침
                 }
             } catch (error) {
                 console.error('메시지 삭제 실패:', error);
@@ -125,6 +136,16 @@ export default {
             } catch (error) {
                 console.error('안 읽은 쪽지 개수 불러오기 실패:', error);
             }
+        },
+        getPageRange() {
+            const range = [];
+            const start = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
+            const end = Math.min(start + 4, this.totalPages);
+
+            for (let i = start; i <= end; i++) {
+                range.push(i);
+            }
+            return range;
         },
         formatDate(date) {
             // 날짜 포맷 (예: 2025-03-16 14:30)
@@ -191,6 +212,17 @@ button.active {
     cursor: pointer;
 }
 
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+}
+
 .unread-status {
     margin-top: 10px;
     color: red;
@@ -213,11 +245,5 @@ button.active {
     padding: 3px 6px;
     border-radius: 50%;
     margin-left: 5px;
-}
-
-.button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
 }
 </style>
