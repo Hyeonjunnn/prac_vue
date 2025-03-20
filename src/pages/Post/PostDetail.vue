@@ -39,17 +39,20 @@
         <span>댓글 {{ post.commentCount }} 개</span>
         <br />
         이후는 알아서 작성하세요
+        <CommentCreate :postNo="post.postNo" @commentAdded="fetchPostDetail" />
       </div>
     </div>
   </div>
 </template>
 <script>
+import CommentCreate from "@/pages/Post/Comment/CommentCreate.vue";
 import {useRoute, useRouter} from "vue-router";
 import {getUserInfo} from "@/utils/AuthUtil.js";
 import {ref} from "vue";
 import axios from "axios";
 export default {
-  name: "PostDiteil",
+  name: "PostDetail",
+  components: { CommentCreate }, // 컴포넌트 등록
   setup() {
     // 초기 데이터 설정
     const route = useRoute(); // 현재 URL 정보 가져옴
