@@ -22,6 +22,12 @@
           <router-link class="nav-link" to="/messages/list"> 쪽지 </router-link>
         </li>
         <li class="nav-item">
+            <router-link class="nav-link" to="/reports/write"> 신고 </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/reports/list"> 신고 리스트 </router-link>
+          </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/projects"> ProjectList </router-link>
         </li>
         <li class="nav-item">

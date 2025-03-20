@@ -13,6 +13,9 @@ import MessageDetails from "@/pages/Message/MessageDetails.vue";
 import MessageList from "@/pages/Message/MessageList.vue";
 import ProjectList from "@/pages/Project/ProjectList.vue";
 import ProjectDetail from "@/pages/Project/ProjectDetail.vue";
+import ReportCreate from '@/pages/report/ReportCreate.vue';
+import ReportList from '@/pages/report/ReportList.vue';
+import ReportDetails from '@/pages/report/ReportDetails.vue';
 import CommentList from "@/pages/Post/Comment/CommentList.vue";
 import CommentCreate from "@/pages/Post/Comment/CommentCreate.vue";
 
@@ -32,6 +35,9 @@ const router = createRouter({
     {path: "/messages/list", component: MessageList},
     {path: "/messages/write", component: MessageCreate},
     {path: "/messages/:messageNo", component: MessageDetails},
+    { path: '/reports/write', component: ReportCreate},
+    { path: '/reports/list', component: ReportList},
+    { path: '/reports/:reportNo', component: ReportDetails },
     {path: "/projects", name: "ProjectList", component: ProjectList},
     {path: "/projects/:projectNo", name: "ProjectDetail", component: ProjectDetail},
     {path: "/:paths(.*)*", component: NotFound},

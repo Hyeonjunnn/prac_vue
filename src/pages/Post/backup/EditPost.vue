@@ -35,7 +35,6 @@ import { ref, inject, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { getUserInfo, refreshToken } from '@/utils/AuthUtil.js';
-import { title } from '@tailus/themer';
 
 export default {
     name: 'EditPost',
