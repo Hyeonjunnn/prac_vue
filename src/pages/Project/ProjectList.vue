@@ -2,11 +2,8 @@
   <div>
     <!-- 분류바 -->
     <div class="category-bar">
-      <button @click="changeBoardType('NOTICE')" class="category-button">공지</button>
-      <button @click="changeBoardType('PROJECT_RECRUIT')" class="category-button">프로젝트</button>
-      <button @click="changeBoardType('FREE')" class="category-button">자유</button>
       <router-link to="/post/write">
-        <button class="category-button">글 작성</button>
+        <button class="category-button">팀 생성</button>
       </router-link>
     </div>
 
@@ -14,7 +11,6 @@
     <SearchBar :size-options="sizeOptions" :post-sort-options="postSortOptions" :select-options="selectOptions" @search="handleSearch" />
 
     <!-- 테이블 -->
-
     <div class="main-container">
       <div class="table-container">
         <div class="table-wrapper">
@@ -23,18 +19,20 @@
             <thead class="table-header">
               <tr>
                 <th class="header-cell width-80">번호</th>
-                <th class="header-cell width-350">제목</th>
-                <th class="header-cell">글쓴이</th>
-                <th class="header-cell">작성일</th>
+                <th class="header-cell">프로젝트</th>
+                <th class="header-cell width-350">팀</th>
+                <th class="header-cell">간단 소개</th>
+                <th class="header-cell">상태</th>
               </tr>
             </thead>
             <!-- 내용 -->
             <tbody>
-              <tr v-for="(post, i) in paginatedPosts" :key="i" @click="detailePage(post.postNo)" class="table-row">
-                <td class="body-cell">{{ post.postNo }}</td>
-                <td class="body-cell">{{ post.title }}</td>
-                <td class="body-cell">{{ post.userName }}</td>
-                <td class="body-cell">{{ new Date(post.createdAt).toLocaleDateString() }}</td>
+              <tr v-for="(post, i) in paginatedPosts" :key="i" @click="ditailePage(post.no)" class="table-row">
+                <td class="body-cell">{{ post.no }}</td>
+                <td class="body-cell">{{ post.name }}</td>
+                <td class="body-cell">{{ post.teamName }}</td>
+                <td class="body-cell">{{ post.content }}</td>
+                <td class="body-cell">{{ post.projectStatus }}</td>
               </tr>
             </tbody>
           </table>
@@ -60,7 +58,6 @@ export default {
   data() {
     return {
       postList: [], // 초기 데이터 정의
-      boardType: "FREE", // 페이지 분류
       postSortOption: "LATEST", // 정렬 순서
 
       page: 1, // 초기 페이지 번호
@@ -69,22 +66,22 @@ export default {
       searchQuery: "", // 검색어
       selectOption: "", // 검색 옵션
 
+      paginatedPosts: [], // 페이징된 게시글
+
       // 검색창 데이터---------------
       // 항목 개수
       sizeOptions: [10, 20, 30],
       // 정렬 옵션
       postSortOptions: [
         {value: "LATEST", label: "최신순"},
-        {value: "BOOKMARK", label: "북마크"},
         {value: "VIEW", label: "조회수"},
-        {value: "COMMENT", label: "댓글"},
       ],
       // 검색 옵션
       selectOptions: [
         {value: "", label: "전체"},
         {value: "TITLE", label: "제목"},
         {value: "CONTENT", label: "내용"},
-        {value: "USERNAME", label: "유저이름"},
+        {value: "PROJECT_TECHS", label: "기술명"},
       ],
     };
   },
@@ -109,8 +106,7 @@ export default {
     async fetchPostList() {
       // 기본 요청 파라미터
       const params = {
-        boardType: this.boardType,
-        postSortOption: this.postSortOption,
+        projectSortOption: this.postSortOption,
         page: this.page - 1, // 현재 페이지 번호 -1 (0 기반 인덱스)
         size: this.size,
       };
@@ -122,7 +118,7 @@ export default {
       }
 
       await axios
-        .get("http://localhost:8087/posts", {params})
+        .get("http://localhost:8087/project", {params})
         .then((response) => {
           if (response.status === 200) {
             this.postList = response.data;
@@ -136,13 +132,6 @@ export default {
           this.postList = {content: []};
           this.page = 1;
         });
-    },
-    // 분류별로 데이터를 가져오는 메소드
-    changeBoardType(type) {
-      this.boardType = type;
-      this.page = 1; // 페이지 초기화
-      this.searchQuery = ""; // 검색 초기화
-      this.fetchPostList(); // 데이터 재 호출
     },
     // 페이징 시 값 변경 메소드
     setPage(page) {
@@ -158,8 +147,8 @@ export default {
       this.page = 1; // 검색 시 페이지 초기화
       this.fetchPostList();
     },
-    detailePage(no) {
-      this.$router.push(`/post/${no}`);
+    ditailePage(no) {
+      this.$router.push(`/projects/${no}`);
     },
   },
 };
