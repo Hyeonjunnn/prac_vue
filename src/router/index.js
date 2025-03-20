@@ -46,7 +46,7 @@ const router = createRouter({
     { path: '/reports/list', component: ReportList},
     { path: '/reports/:reportNo', component: ReportDetails },
     {path: "/project", name: "ProjectList", component: ProjectList},
-    {path: "/project/:projectNo", name: "ProjectDetailt", component: ProjectDeteil},
+    {path: "/project/:projectNo", name: "ProjectDetail", component: ProjectDetail},
     {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
     {path: "/:paths(.*)*", component: NotFound},
   ],
