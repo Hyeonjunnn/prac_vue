@@ -54,7 +54,7 @@ import {useRoute, useRouter} from "vue-router";
 import {ref} from "vue";
 import axios from "axios";
 export default {
-    name: "ProjectDiteil",
+    name: "ProjectDetail",
     setup() {
         // 초기 데이터 설정
         const route = useRoute(); // 현재 URL 정보 가져옴
