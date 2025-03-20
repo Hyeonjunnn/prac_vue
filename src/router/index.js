@@ -12,6 +12,9 @@ import NotFound from '@/pages/NotFound.vue';
 import MessageCreate from '@/pages/Message/MessageCreate.vue';
 import MessageDetails from '@/pages/Message/MessageDetails.vue';
 import MessageList from '@/pages/Message/MessageList.vue';
+import ReportCreate from '@/pages/report/ReportCreate.vue';
+import ReportList from '@/pages/report/ReportList.vue';
+import ReportDetails from '@/pages/report/ReportDetails.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -27,6 +30,9 @@ const router = createRouter({
         { path: '/messages/list', component: MessageList},
         { path: '/messages/write', component: MessageCreate },
         { path: '/messages/:messageNo', component: MessageDetails },
+        { path: '/reports/write', component: ReportCreate},
+        { path: '/reports/list', component: ReportList},
+        { path: '/reports/:reportNo', component: ReportDetails },
         { path: '/posts/:postNo', name: 'EditPost', component: EditPost },
         { path: '/posts/:postNo', name: 'PostDetail', component: PostDetail },
         { path: '/:paths(.*)*', component: NotFound },

@@ -95,8 +95,7 @@ export default {
         async deleteMessage(messageNo) {
             try {
                 const token = getUserInfo().accessToken;
-                const url = `http://localhost:8087/messages?messageNo=${messageNo}`;  // 쿼리 파라미터로 messageNo 전달
-
+                const url = `http://localhost:8087/messages/${messageNo}`;  // PathVariable로 messageNo 전달
                 const config = {
                     headers: {
                         'Authorization': 'Bearer ' + token,
