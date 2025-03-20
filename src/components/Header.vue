@@ -13,22 +13,22 @@
           <router-link class="nav-link" to="/about"> About </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/post"> PostList </router-link>
+          <router-link class="nav-link" to="/post"> 게시판 </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/post"> TeamList </router-link>
+          <router-link class="nav-link" to="/team"> 팀 </router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/messages/list"> 쪽지 </router-link>
         </li>
         <li class="nav-item">
-            <router-link class="nav-link" to="/reports/write"> 신고 </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link" to="/reports/list"> 신고 리스트 </router-link>
-          </li>
+          <router-link class="nav-link" to="/project"> 프로젝트 </router-link>
+        </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/projects"> ProjectList </router-link>
+          <router-link class="nav-link" to="/reports/write"> 신고 </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link class="nav-link" to="/reports/list"> 신고 리스트 </router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/login"> Login </router-link>

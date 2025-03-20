@@ -13,6 +13,10 @@ import MessageDetails from "@/pages/Message/MessageDetails.vue";
 import MessageList from "@/pages/Message/MessageList.vue";
 import ProjectList from "@/pages/Project/ProjectList.vue";
 import ProjectDetail from "@/pages/Project/ProjectDetail.vue";
+import ProjectWrite from "@/pages/Project/ProjectWrite.vue";
+import TeamList from "@/pages/team/TeamList.vue";
+import TeamDeteil from "@/pages/team/TeamDeteil.vue";
+import TeamWrite from "@/pages/team/TeamWrite.vue";
 import ReportCreate from '@/pages/report/ReportCreate.vue';
 import ReportList from '@/pages/report/ReportList.vue';
 import ReportDetails from '@/pages/report/ReportDetails.vue';
@@ -35,11 +39,15 @@ const router = createRouter({
     {path: "/messages/list", component: MessageList},
     {path: "/messages/write", component: MessageCreate},
     {path: "/messages/:messageNo", component: MessageDetails},
+    {path: "/team", name: "TeamList", component: TeamList},
+    {path: "/team/:teamtNo", name: "TeamDetailt", component: TeamDeteil},
+    {path: "/team/write", name: "TeamWrite", component: TeamWrite},
     { path: '/reports/write', component: ReportCreate},
     { path: '/reports/list', component: ReportList},
     { path: '/reports/:reportNo', component: ReportDetails },
-    {path: "/projects", name: "ProjectList", component: ProjectList},
-    {path: "/projects/:projectNo", name: "ProjectDetail", component: ProjectDetail},
+    {path: "/project", name: "ProjectList", component: ProjectList},
+    {path: "/project/:projectNo", name: "ProjectDetailt", component: ProjectDeteil},
+    {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
     {path: "/:paths(.*)*", component: NotFound},
   ],
 });
