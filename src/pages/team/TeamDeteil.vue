@@ -50,17 +50,22 @@
 
             <div class="space-y-6" v-else>
                 <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
+                <div v-if="leader">
+                    <router-link to="/project/write">
+                        <button class="category-button">프로젝트 생성</button>
+                    </router-link>
+                </div>
             </div>
 
             <!-- 팀원 신청 버튼 -->
-            <div v-if="team.status === 'OPEN'">
+            <div v-if="team.status === 'OPEN' & !leader">
                 <button
                     class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
                     @click="confirmJoin(team.no)">가입 신청</button>
             </div>
 
             <!-- 수정 삭제 -->
-            <div>
+            <div v-if="leader">
                 <br />
                 <button
                     class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
@@ -75,7 +80,7 @@
 <script>
 import {useRoute, useRouter} from "vue-router";
 import {getUserInfo} from "@/utils/AuthUtil.js";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import axios from "axios";
 export default {
     name: "TeamDiteil",
@@ -86,6 +91,14 @@ export default {
         const teamNo = route.params.teamNo; // 경로에 포함된 번호를 가져옴
         const team = ref({}); // 반응형 데이터 선언
         const project = ref({});
+        const leader = ref(false); // 팀장 확인
+
+        const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + getUserInfo().accessToken,
+                },
+            };
 
         // 상세 정보 가져와서 team에 넣음
         axios.get(`http://localhost:8087/team/${teamNo}`).then((response) => {
@@ -96,6 +109,15 @@ export default {
                 status: response.data.team.team.projectStatus
             };
             project.value = response.data.project;
+
+            return axios.get(`http://localhost:8087/team/${teamNo}/leader-role`,config)
+            .then((response) => {
+                console.log("팀장 정보", response);
+                leader.value = true // 팀장 확인됨
+            })
+            .catch((error) => {
+                console.log(error.response.data.message);
+            })
         });
 
         // 팀 수정용 데이터
@@ -115,6 +137,7 @@ export default {
         return {
             team,
             project,
+            leader,
             goToEditPage,
         };
     },

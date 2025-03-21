@@ -117,9 +117,10 @@ export default {
 
             // 검색 조건이 있을 경우 파라미터에 추가
             if (this.searchQuery && this.selectOption) {
-                params.option = this.selectOption;
-                params.keyword = this.searchQuery;
+                // selectOption 값이 key가 되고, searchQuery는 value가 됩니다.
+                params[this.selectOption] = this.searchQuery; 
             }
+
 
             await axios
                 .get("http://localhost:8087/team", {params})
