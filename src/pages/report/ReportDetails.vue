@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <h2>신고 상세</h2>
+      <h2>신고 처리</h2>
       <div v-if="report">
         <div class="report-info">
           <h3>신고 번호: {{ report.no }}</h3>

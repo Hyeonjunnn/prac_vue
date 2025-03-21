@@ -77,7 +77,7 @@ export default {
                     }
                 };
 
-                let url = "http://localhost:8087/reports-list";
+                let url = "http://localhost:8087/reports";
                 let params = {
                     page: page - 1,
                     size: this.perPage,

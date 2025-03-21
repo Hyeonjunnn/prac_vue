@@ -65,7 +65,8 @@ export default {
                 const token = getUserInfo().accessToken;
                 const config = { headers: { 'Authorization': 'Bearer ' + token } };
                 await axios.delete(`http://localhost:8087/messages/${messageNo}`, config);
-                router.push('/messages/list');
+                router.push('/messages/');
+                alert('쪽지가 삭제되었습니다');
             } catch (error) {
                 console.error("쪽지 삭제 실패:", error);
             }

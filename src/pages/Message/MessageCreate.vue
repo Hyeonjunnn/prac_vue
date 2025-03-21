@@ -11,7 +11,7 @@
         <input type="text" class="form-control" id="receiverId" v-model="messageItem.receiverId" />
       </div>
       <div class="form-group">
-        <label for="content">메시지 내용 :</label>
+        <label for="content">쪽지 내용 :</label>
         <textarea class="form-control" rows="3" id="content" v-model="messageItem.content"></textarea>
       </div>
       <div class="form-group">
