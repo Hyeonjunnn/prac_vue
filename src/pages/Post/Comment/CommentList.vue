@@ -1,59 +1,48 @@
 <template>
   <div>
-    <h3>댓글 목록</h3>
-    <div v-if="comments.length">
+    <div v-if="comments.length === 0">댓글이 없습니다.</div>
+    <div v-else>
       <CommentItem
           v-for="comment in comments"
           :key="comment.commentNo"
-          :commentItem="comment"
-          @commentDeleted="removeComment"
+          :comment="comment"
+          @commentUpdated="fetchComments"
       />
     </div>
-    <p v-else>등록된 댓글이 없습니다.</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import CommentItem from './CommentItem.vue';
+import axios from "axios";
+import CommentItem from "@/pages/Post/Comment/CommentItem.vue";
+import {ref} from "vue";
 
 export default {
-  name: 'CommentList',
+  name: "CommentList",
   components: { CommentItem },
+  props: {
+    postNo: {
+      type: Number,  // 🚨 실무 기준: postNo는 항상 Number로 처리
+      required: true
+    }
+  },
   data() {
-    return {
-      comments: []
-    };
+    return {  comments: ref([]) };
   },
   mounted() {
+    console.log('🔎 postNo 확인:', this.postNo);
     this.fetchComments();
   },
   methods: {
     async fetchComments() {
-      const postNo = this.$route.params.postNo;
-      const url = `http://localhost:8087/posts/${postNo}/comments`;
-
       try {
-        const response = await axios.get(url);
-        this.comments = response.data;  // API 응답이 배열이라면 정상 작동
+        const response = await axios.get(`http://localhost:8087/posts/${this.postNo}/comments`);
+        console.log('✅ 댓글 데이터:', response.data);  // ✅ 응답 확인
+        this.comments = Array.isArray(response.data) ? response.data : response.data.content;
       } catch (error) {
-        alert('댓글 목록 불러오기 실패');
-      }
-    },
-
-    //서버 데이터 일관성 유지 위해 fetchComments() 호출 추가
-    async removeComment(commentNo) {
-      try {
-        await axios.delete(`http://localhost:8087/comments/${commentNo}`);
-        alert('댓글이 삭제되었습니다.');
-        await this.fetchComments();  // 서버 데이터 새로고침으로 정합성 유지
-      } catch (error) {
-        alert('댓글 삭제 실패');
+        console.error("❌ 댓글 불러오기 실패:", error);
       }
     }
   }
 };
-
-
 </script>
-
