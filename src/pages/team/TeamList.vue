@@ -2,16 +2,22 @@
     <div>
         <!-- 분류바 -->
         <div class="category-bar">
+            <router-link to="/team">
+                <button class="category-button">팀</button>
+            </router-link>
+            <router-link to="/project">
+                <button class="category-button">프로젝트</button>
+            </router-link>
             <router-link to="/team/write">
                 <button class="category-button">팀 생성</button>
             </router-link>
         </div>
 
         <!-- 검색바 -->
-        <SearchBar :size-options="sizeOptions" :post-sort-options="postSortOptions" :select-options="selectOptions" @search="handleSearch" />
+        <SearchBar :size-options="sizeOptions" :post-sort-options="postSortOptions" :select-options="selectOptions"
+            @search="handleSearch" />
 
         <!-- 테이블 -->
-
         <div class="main-container">
             <div class="table-container">
                 <div class="table-wrapper">
@@ -27,7 +33,8 @@
                         </thead>
                         <!-- 내용 -->
                         <tbody>
-                            <tr v-for="(post, i) in paginatedPosts" :key="i" @click="detailePage(post.no)" class="table-row">
+                            <tr v-for="(post, i) in paginatedPosts" :key="i" @click="detailePage(post.no)"
+                                class="table-row">
                                 <td class="body-cell">{{ post.no }}</td>
                                 <td class="body-cell">{{ post.team.teamName }}</td>
                                 <td class="body-cell">{{ post.team.teamIntroduce }}</td>
@@ -40,7 +47,8 @@
         </div>
 
         <!-- 페이징 -->
-        <PageNav v-if="postList.content && postList.content.length > 0" :current-page="page" :items-per-page="parseInt(size)" :total-pages="postList.totalPages" @set-page="setPage" />
+        <PageNav v-if="postList.content && postList.content.length > 0" :current-page="page"
+            :items-per-page="parseInt(size)" :total-pages="postList.totalPages" @set-page="setPage" />
     </div>
 </template>
 
@@ -124,6 +132,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error("데이터를 불러오는 중, 오류 발생함 초기화"); // 오류 처리
+                    console.log(error);
                     // 오류 발생 시 postList 초기화 및 페이지 번호 초기화
                     this.postList = {content: []};
                     this.page = 1;
@@ -170,19 +179,22 @@ export default {
     font-weight: 500;
     text-transform: capitalize;
     color: white;
-    background-color: #4f46e5; /* indigo-600 */
+    background-color: #4f46e5;
+    /* indigo-600 */
     border-radius: 0.375rem;
     transition: background-color 0.2s ease;
 }
 
 .category-button:hover {
-    background-color: #4338ca; /* indigo-500 */
+    background-color: #4338ca;
+    /* indigo-500 */
 }
 
 .select-box {
     width: 100%;
     padding: 0.5rem 1rem;
-    border: 1px solid #cbd5e0; /* gray-400 */
+    border: 1px solid #cbd5e0;
+    /* gray-400 */
     border-radius: 0.375rem;
     background-color: white;
 }
@@ -190,7 +202,8 @@ export default {
 .search-input {
     width: 100%;
     padding: 0.5rem 2rem 0.5rem 2.5rem;
-    border: 1px solid #cbd5e0; /* gray-400 */
+    border: 1px solid #cbd5e0;
+    /* gray-400 */
     border-radius: 0.375rem;
 }
 
@@ -206,8 +219,10 @@ export default {
     margin: 1.5rem 0;
     overflow: hidden;
     background-color: #ffffff;
-    border-radius: 0.375rem; /* rounded-md */
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* shadow */
+    border-radius: 0.375rem;
+    /* rounded-md */
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    /* shadow */
 }
 
 .custom-table {
@@ -217,7 +232,8 @@ export default {
 }
 
 .table-header {
-    border-bottom: 1px solid #e5e7eb; /* border-b */
+    border-bottom: 1px solid #e5e7eb;
+    /* border-b */
 }
 
 .width-350 {
@@ -230,12 +246,17 @@ export default {
 }
 
 .header-cell {
-    padding: 0.75rem 1.25rem; /* px-5 py-3 */
-    font-size: 0.875rem; /* text-sm */
-    font-weight: 500; /* font-medium */
+    padding: 0.75rem 1.25rem;
+    /* px-5 py-3 */
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 500;
+    /* font-medium */
     text-transform: uppercase;
-    color: #f3f4f6; /* text-gray-100 */
-    background-color: #4f46e5; /* indigo-800 */
+    color: #f3f4f6;
+    /* text-gray-100 */
+    background-color: #4f46e5;
+    /* indigo-800 */
 }
 
 .table-row {
@@ -244,21 +265,28 @@ export default {
 }
 
 .table-row:hover {
-    background-color: #e5e7eb; /* hover:bg-gray-200 */
+    background-color: #e5e7eb;
+    /* hover:bg-gray-200 */
 }
 
 .body-cell {
-    padding: 1rem 1.5rem; /* px-6 py-4 */
-    font-size: 1.125rem; /* text-lg */
-    color: #6b7280; /* text-gray-500 */
-    border-bottom: 1px solid #e5e7eb; /* border-b */
+    padding: 1rem 1.5rem;
+    /* px-6 py-4 */
+    font-size: 1.125rem;
+    /* text-lg */
+    color: #6b7280;
+    /* text-gray-500 */
+    border-bottom: 1px solid #e5e7eb;
+    /* border-b */
 }
 
 .body-cell:first-child {
-    font-weight: 500; /* 강조를 위해 font 추가 */
+    font-weight: 500;
+    /* 강조를 위해 font 추가 */
 }
 
 .body-cell:hover {
-    color: #374151; /* text-gray-700 */
+    color: #374151;
+    /* text-gray-700 */
 }
 </style>

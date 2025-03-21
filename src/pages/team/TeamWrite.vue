@@ -11,24 +11,23 @@
                         <div class="grid grid-cols-1 gap-6 mt-4">
                             <div>
                                 <label class="text-gray-700" for="teamName">제목</label>
-                                <input class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" type="text" v-model="teamName" />
+                                <input
+                                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                                    type="text" v-model="teamName" />
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="teamIntroduce">내용</label>
                                 <textarea
                                     class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                                    v-model="teamIntroduce"
-                                ></textarea>
+                                    v-model="teamIntroduce"></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label htmlFor="projectStatus" class="text-gray-700">게시글 타입</label>
-                                <select
-                                    id="projectStatus"
+                                <label htmlFor="projectStatus" class="text-gray-700">상태</label>
+                                <select id="projectStatus"
                                     class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                                    v-model="projectStatus"
-                                >
+                                    v-model="projectStatus">
                                     <option value="OPEN">공개</option>
                                     <option value="CLOSED">닫힘</option>
                                     <option value="IN_PROGRESS">진행중</option>
@@ -38,7 +37,8 @@
                         </div>
 
                         <div class="flex justify-end mt-4">
-                            <button type="submit" class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+                            <button type="submit"
+                                class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
                                 {{ isEditMode ? "수정" : "저장" }}
                             </button>
                         </div>
@@ -63,6 +63,7 @@ export default {
         const teamName = ref(route.query.teamName || ""); // 현재 URL에 값이 존재한다면 삽입 아니면 공백
         const teamIntroduce = ref(route.query.teamIntroduce || "");
         const projectStatus = ref(route.query.projectStatus || "OPEN");
+        const teamNo = ref(route.query.teamNo || null);
         const isEditMode = ref(!!route.query.teamName); // 수정모드 확인용 (!!은 강제로 Boolean 타입변경)
 
         // 작성/ 수정 한 값을 처리하는 메소드
@@ -81,11 +82,11 @@ export default {
 
             if (isEditMode.value) {
                 axios
-                    .post(`http://localhost:8087/team/${postNo.value}`, params, config)
+                    .put(`http://localhost:8087/team/${teamNo.value}`, params, config)
                     .then(() => {
                         alert("게시글이 수정되었습니다.");
                         console.log(params);
-                        router.push(`/team/${postNo.value}`); // 수정 후 상세 페이지로 이동
+                        router.push(`/team/${teamNo.value}`); // 수정 후 상세 페이지로 이동
                     })
                     .catch((error) => {
                         alert(error.response.data.message);
@@ -93,9 +94,10 @@ export default {
             } else {
                 axios
                     .post("http://localhost:8087/team", params, config)
-                    .then(() => {
-                        alert("게시글이 작성되었습니다.");
-                        router.push(`/team/${postNo.value}`); // 작성 후 상세 페이지로 이동
+                    .then((response) => {
+                        alert("팀이 생성되었습니다.");
+                        teamNo.value = response.data.no;
+                        router.push(`/team/${teamNo.value}`); // 작성 후 상세 페이지로 이동
                     })
                     .catch((error) => {
                         alert(error.response.data.message);
@@ -108,8 +110,8 @@ export default {
             teamName,
             teamIntroduce,
             projectStatus,
-            postNo,
             isEditMode,
+            teamNo,
             submitPostData,
         };
     },

@@ -8,7 +8,8 @@
     </div>
 
     <!-- 검색바 -->
-    <SearchBar :size-options="sizeOptions" :post-sort-options="postSortOptions" :select-options="selectOptions" @search="handleSearch" />
+    <SearchBar :size-options="sizeOptions" :post-sort-options="postSortOptions" :select-options="selectOptions"
+      @search="handleSearch" />
 
     <!-- 테이블 -->
     <div class="main-container">
@@ -41,7 +42,8 @@
     </div>
 
     <!-- 페이징 -->
-    <PageNav v-if="postList.content && postList.content.length > 0" :current-page="page" :items-per-page="parseInt(size)" :total-pages="postList.totalPages" @set-page="setPage" />
+    <PageNav v-if="postList.content && postList.content.length > 0" :current-page="page"
+      :items-per-page="parseInt(size)" :total-pages="postList.totalPages" @set-page="setPage" />
   </div>
 </template>
 
@@ -165,19 +167,22 @@ export default {
   font-weight: 500;
   text-transform: capitalize;
   color: white;
-  background-color: #4f46e5; /* indigo-600 */
+  background-color: #4f46e5;
+  /* indigo-600 */
   border-radius: 0.375rem;
   transition: background-color 0.2s ease;
 }
 
 .category-button:hover {
-  background-color: #4338ca; /* indigo-500 */
+  background-color: #4338ca;
+  /* indigo-500 */
 }
 
 .select-box {
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid #cbd5e0; /* gray-400 */
+  border: 1px solid #cbd5e0;
+  /* gray-400 */
   border-radius: 0.375rem;
   background-color: white;
 }
@@ -185,7 +190,8 @@ export default {
 .search-input {
   width: 100%;
   padding: 0.5rem 2rem 0.5rem 2.5rem;
-  border: 1px solid #cbd5e0; /* gray-400 */
+  border: 1px solid #cbd5e0;
+  /* gray-400 */
   border-radius: 0.375rem;
 }
 
@@ -201,8 +207,10 @@ export default {
   margin: 1.5rem 0;
   overflow: hidden;
   background-color: #ffffff;
-  border-radius: 0.375rem; /* rounded-md */
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* shadow */
+  border-radius: 0.375rem;
+  /* rounded-md */
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  /* shadow */
 }
 
 .custom-table {
@@ -212,7 +220,8 @@ export default {
 }
 
 .table-header {
-  border-bottom: 1px solid #e5e7eb; /* border-b */
+  border-bottom: 1px solid #e5e7eb;
+  /* border-b */
 }
 
 .width-350 {
@@ -225,12 +234,17 @@ export default {
 }
 
 .header-cell {
-  padding: 0.75rem 1.25rem; /* px-5 py-3 */
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 500; /* font-medium */
+  padding: 0.75rem 1.25rem;
+  /* px-5 py-3 */
+  font-size: 0.875rem;
+  /* text-sm */
+  font-weight: 500;
+  /* font-medium */
   text-transform: uppercase;
-  color: #f3f4f6; /* text-gray-100 */
-  background-color: #4f46e5; /* indigo-800 */
+  color: #f3f4f6;
+  /* text-gray-100 */
+  background-color: #4f46e5;
+  /* indigo-800 */
 }
 
 .table-row {
@@ -239,21 +253,28 @@ export default {
 }
 
 .table-row:hover {
-  background-color: #e5e7eb; /* hover:bg-gray-200 */
+  background-color: #e5e7eb;
+  /* hover:bg-gray-200 */
 }
 
 .body-cell {
-  padding: 1rem 1.5rem; /* px-6 py-4 */
-  font-size: 1.125rem; /* text-lg */
-  color: #6b7280; /* text-gray-500 */
-  border-bottom: 1px solid #e5e7eb; /* border-b */
+  padding: 1rem 1.5rem;
+  /* px-6 py-4 */
+  font-size: 1.125rem;
+  /* text-lg */
+  color: #6b7280;
+  /* text-gray-500 */
+  border-bottom: 1px solid #e5e7eb;
+  /* border-b */
 }
 
 .body-cell:first-child {
-  font-weight: 500; /* 강조를 위해 font 추가 */
+  font-weight: 500;
+  /* 강조를 위해 font 추가 */
 }
 
 .body-cell:hover {
-  color: #374151; /* text-gray-700 */
+  color: #374151;
+  /* text-gray-700 */
 }
 </style>
