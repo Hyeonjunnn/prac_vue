@@ -22,6 +22,10 @@ import ReportList from '@/pages/report/ReportList.vue';
 import ReportDetails from '@/pages/report/ReportDetails.vue';
 import CommentList from "@/pages/Post/Comment/CommentList.vue";
 import CommentCreate from "@/pages/Post/Comment/CommentCreate.vue";
+import UserList from "@/pages/Admin/UserList.vue";
+import UserDetail from "@/pages/Admin/UserDetail.vue";
+import AllUserComments from "@/pages/Admin/AllUserComments.vue";
+import UserAllPost from "@/pages/Admin/UserAllPost.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -29,7 +33,11 @@ const router = createRouter({
     {path: "/", component: Home},
     {path: "/login", component: Login},
     {path: "/users", component: Users},
-    {path: "/admins", component: Admins},
+    {path: "/admin", component: Admins},
+    {path: "/admin/users", component: UserList},
+    {path: "/admin/user/:userNo", component: UserDetail},
+    {path: "/admin/user/:userNo/comments", component: AllUserComments},
+    {path: "/admin/user/:userNo/post", component: UserAllPost},
     {path: "/about", component: About},
     {path: "/post", component: PostList},
     {path: "/post/:postNo", component: PostDetail},
@@ -48,7 +56,10 @@ const router = createRouter({
     {path: "/project", name: "ProjectList", component: ProjectList},
     {path: "/project/:projectNo", name: "ProjectDetail", component: ProjectDetail},
     {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
-    {path: "/:paths(.*)*", component: NotFound},
+
+    { path: "/notFound", component: NotFound },
+    { path: "/:pathMatch(.*)*", redirect: "/notFound" }
+
   ],
 });
 

@@ -37,7 +37,7 @@
           <router-link class="nav-link" to="/users"> Users </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/admins"> Admins </router-link>
+          <router-link class="nav-link" to="/admin"> Admins </router-link>
         </li>
       </ul>
     </div>

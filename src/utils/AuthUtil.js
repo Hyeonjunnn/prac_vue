@@ -66,7 +66,6 @@ const refreshToken = async () => {
             'Authorization': `Bearer ${refreshToken}`,
         },
     };
-
     try {
         const response = await axios.post(url, {}, config);
         const user = response.data;
@@ -84,5 +83,4 @@ const refreshToken = async () => {
         setUserInfo(null);
     }
 }
-
 export { getUserInfo, loginProcess, logoutProcess, refreshToken }
