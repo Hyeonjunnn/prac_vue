@@ -34,37 +34,76 @@
         <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(post.postNo)">삭제</button>
       </div>
       <!-- 댓글 부분 -->
-      <div>
+      <div  v-if="post.boardType === 'FREE'">
         <br />
         <span>댓글 {{ post.commentCount }} 개</span>
         <br />
-        이후는 알아서 작성하세요
-        <CommentCreate :postNo="post.postNo" @commentAdded="fetchPostDetail" />
+
+        <CommentCreate
+            v-if="post.postNo"
+            :postNo="Number(post.postNo)"
+            @commentAdded="handleCommentAdded"
+        />
+
+        <CommentList
+            v-if="post.postNo"
+            ref="commentList"
+            :postNo="Number(post.postNo)"
+            @commentDeleted="handleCommentDeleted"
+        />
+
       </div>
     </div>
   </div>
 </template>
 <script>
 import CommentCreate from "@/pages/Post/Comment/CommentCreate.vue";
+import CommentList from "@/pages/Post/Comment/CommentList.vue";
 import {useRoute, useRouter} from "vue-router";
 import {getUserInfo} from "@/utils/AuthUtil.js";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import axios from "axios";
+import commentList from "@/pages/Post/Comment/CommentList.vue";
 export default {
   name: "PostDetail",
-  components: { CommentCreate }, // 컴포넌트 등록
+  components: { CommentCreate, CommentList }, // 컴포넌트 등록
   setup() {
     // 초기 데이터 설정
     const route = useRoute(); // 현재 URL 정보 가져옴
     const router = useRouter(); // 경로 이동 (라우트를 이동하거나 상태 변경할때 사용)
-    const postNo = route.params.postNo; // 경로에 포함된 번호를 가져옴
+    const postNo = Number(route.params.postNo); // 경로에 포함된 번호를 가져옴
     const post = ref({}); // 반응형 데이터 선언
+    const commentList = ref(null);
+
+
+    const handleCommentAdded = (newComment) => {
+      console.log('✅ 새 댓글 추가:', newComment);
+      post.value.commentCount += 1;  // 🔥 댓글 수 즉시 증가
+
+      // commentList.value가 null인 경우 방어 처리
+      if (commentList.value) {
+        commentList.value.comments.unshift(newComment);  //신규 댓글 즉시 추가
+      } else {
+        console.warn('❗ commentList가 null입니다.');
+      }
+    };
+
+
     const initParams = {
       page: 1,
       size: 10,
     };
 
-    // 상세 정보 가져와서 post에 넣음
+    const fetchPostDetail = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8087/posts/${postNo}/with-comments`, initParams);
+        post.value = response.data;
+      } catch (error) {
+        console.error('❌ 게시글 불러오기 실패:', error);
+      }
+    };
+
+    //상세 정보 가져와서 post에 넣음
     axios.get(`http://localhost:8087/posts/${postNo}/with-comments`, initParams).then((response) => {
       post.value = response.data;
     });
@@ -82,10 +121,18 @@ export default {
       });
     };
 
+    onMounted(() => {
+      fetchPostDetail();
+      console.log('🔎 commentList 상태 확인:', commentList.value);
+    });
+
     // 메소드 반환
     return {
       post,
       goToEditPage,
+      fetchPostDetail,
+       commentList,
+      handleCommentAdded
     };
   },
   methods: {
@@ -115,6 +162,14 @@ export default {
         alert(error.response.data.message);
       }
     },
+
+
+
+    handleCommentDeleted() {
+      if (this.post.commentCount > 0) {
+        this.post.commentCount -= 1; // 🔥 댓글 수 즉시 감소
+      }
+    }
   },
 };
 </script>
