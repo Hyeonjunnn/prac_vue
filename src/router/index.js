@@ -26,6 +26,11 @@ import UserList from "@/pages/Admin/UserList.vue";
 import UserDetail from "@/pages/Admin/UserDetail.vue";
 import AllUserComments from "@/pages/Admin/AllUserComments.vue";
 import UserAllPost from "@/pages/Admin/UserAllPost.vue";
+import UserAllProject from "@/pages/Admin/UserAllProject.vue";
+import AdminLogin from "@/pages/Admin/AdminLogin.vue";
+import FeedbackList from "@/pages/Admin/FeedbackList.vue";
+import AdminProjectList from "@/pages/Admin/AdminProjectList.vue";
+import AdminTechManage from "@/pages/Admin/AdminTechManage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,25 +38,30 @@ const router = createRouter({
     {path: "/", component: Home},
     {path: "/login", component: Login},
     {path: "/users", component: Users},
-    {path: "/admin", component: Admins},
+    {path: "/admin", component: Admins,  meta: { requiresAuth: true } },
+    {path: "/admin/login", component: AdminLogin},
     {path: "/admin/users", component: UserList},
     {path: "/admin/user/:userNo", component: UserDetail},
     {path: "/admin/user/:userNo/comments", component: AllUserComments},
     {path: "/admin/user/:userNo/post", component: UserAllPost},
+    {path: "/admin/user/:userNo/projects", component: UserAllProject},
+    {path: "/admin/feedbacks", component: FeedbackList},
+    {path: "/admin/projects", component: AdminProjectList},
+    {path: '/admin/tech', component: AdminTechManage},
     {path: "/about", component: About},
     {path: "/post", component: PostList},
     {path: "/post/:postNo", component: PostDetail},
     {path: "/post/write", name: "PostWrite", component: PostWrite},
     {path: '/posts/:postNo/comments', name: 'CommentList', component: CommentList },
     {path: '/posts/:postNo/comments/create', name: 'CommentCreate', component: CommentCreate },
-    {path: "/messages", component: MessageList},
+    {path: "/messages/list", component: MessageList},
     {path: "/messages/write", component: MessageCreate},
     {path: "/messages/:messageNo", component: MessageDetails},
     {path: "/team", name: "TeamList", component: TeamList},
     {path: "/team/:teamNo", name: "TeamDetailt", component: TeamDeteil},
     {path: "/team/write", name: "TeamWrite", component: TeamWrite},
     { path: '/reports/write', component: ReportCreate},
-    { path: '/reports', component: ReportList},
+    { path: '/reports/list', component: ReportList},
     { path: '/reports/:reportNo', component: ReportDetails },
     {path: "/project", name: "ProjectList", component: ProjectList},
     {path: "/project/:projectNo", name: "ProjectDetail", component: ProjectDetail},

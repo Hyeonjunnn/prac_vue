@@ -1,6 +1,18 @@
 <template>
   <div class="user-list-container">
     <h2> 유저 관리 페이지</h2>
+
+    <!-- 🔽 정렬 기준 드롭다운 -->
+    <div>
+      <label for="sortOption">정렬 기준:</label>
+
+      <select id="sortOption" v-model="sortOption" @change="fetchUsers">
+        <option value="LATEST">최신 가입순</option>
+        <option value="USERNAME">이름순</option>
+        <option value="ROLE">권한순</option>
+      </select>
+    </div>
+
     <table>
       <thead>
       <tr>
@@ -11,7 +23,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="user in userList" :key="user.username"  @click="goToUserDetail(user.userNo)">
+      <tr v-for="user in userList" :key="user.username" @click="goToUserDetail(user.userNo)">
         <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
         <td><span :class="['role-badge', user.role.toLowerCase()]">{{ user.role }}</span></td>
@@ -30,10 +42,8 @@
       </button>
       <button @click="nextPageGroup" :disabled="pageGroupEnd >= totalPages">»</button>
     </div>
-
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -43,6 +53,7 @@ export default {
       totalPages: 1,
       pageGroupStart: 1,
       pageGroupSize: 10,
+      sortOption: 'LATEST', // 🔥 정렬 기준 추가
     };
   },
   computed: {
@@ -54,12 +65,31 @@ export default {
     }
   },
   mounted() {
+    const fromUserList = sessionStorage.getItem('fromUserList') === 'true';
+    const fromHistoryBack = performance.getEntriesByType("navigation")[0]?.type === 'back_forward';
+
+    if (fromUserList && fromHistoryBack) {
+      const savedPage = sessionStorage.getItem('userListPage');
+      this.currentPage = savedPage ? parseInt(savedPage) : 1;
+      sessionStorage.removeItem('fromUserList');
+    } else {
+      this.currentPage = 1;
+      sessionStorage.removeItem('userListPage');
+    }
+
     this.fetchUsers();
+  },
+  watch: {
+    sortOption() {
+      this.currentPage = 1;
+      this.pageGroupStart = 1;
+      this.fetchUsers();
+    }
   },
   methods: {
     async fetchUsers() {
       try {
-        const response = await fetch(`http://localhost:8087/admin/users?page=${this.currentPage - 1}&size=10`, {
+        const response = await fetch(`http://localhost:8087/admin/users?page=${this.currentPage - 1}&size=10&sortOption=${this.sortOption}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -68,12 +98,14 @@ export default {
         const data = await response.json();
         this.userList = data.content;
         this.totalPages = data.totalPages;
+
       } catch (error) {
         console.error("🚨 유저 목록 가져오기 실패:", error);
       }
     },
     moveToPage(page) {
       this.currentPage = page;
+      sessionStorage.setItem('userListPage', page);
       this.fetchUsers();
     },
     prevPageGroup() {
@@ -91,6 +123,7 @@ export default {
       }
     },
     goToUserDetail(userNo) {
+      sessionStorage.setItem('fromUserList', 'true');
       this.$router.push(`/admin/user/${userNo}`);
     }
   }
@@ -99,6 +132,16 @@ export default {
 
 <style scoped>
 
+
+label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+select {
+  padding: 5px;
+  margin-bottom: 15px;
+}
 
 h2 {
   text-align: center;
