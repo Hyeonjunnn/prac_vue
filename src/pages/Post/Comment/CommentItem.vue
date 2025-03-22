@@ -1,22 +1,30 @@
 <template>
   <div class="comment-item">
     <div class="comment-list-box">
+
       <div class="comment-info-box">
         <p>{{comment.userName}}</p>
-        <p>{{comment.createdAt}}</p>
+        <!-- updatedAt이 존재하면 updatedAt 표시, 없으면 createdAt 표시 -->
+        <p>{{ formatDate(comment.updatedAt || comment.createdAt) }}</p>
       </div>
+      <!--  댓글 본문을 바로 수정할 수 있도록 추가 -->
+      <div v-if="editMode">
+        <textarea v-model="editedContent" class="edited-content-box"></textarea>
+      </div>
+      <p v-else>{{ comment.content }}</p>
 
-      <p>{{ comment.content }}</p>
     </div>
 
 
-    <!-- 수정 및 삭제 버튼 (작성자나 관리자만 보임) -->
-    <div v-if="isEditable">
-      <button @click="deleteComment">삭제</button>
-      <button @click="toggleEdit">수정</button>
+    <!-- 수정/취소 버튼 전환 로직 추가 -->
+    <div v-if="isEditable || isDeletable">
       <div v-if="editMode">
-        <textarea v-model="editedContent"></textarea>
         <button @click="updateComment">수정 완료</button>
+        <button @click="cancelEdit">수정 취소</button>
+      </div>
+      <div v-else>
+        <button v-if="isEditable" @click="toggleEdit">수정</button>
+        <button v-if="isDeletable" @click="deleteComment">삭제</button>
       </div>
     </div>
 
@@ -32,7 +40,9 @@
 
 <script>
 import axios from 'axios';
-import { getUserInfo } from '@/utils/AuthUtil.js';
+import { getUsernameFromToken, getUserInfo } from "@/utils/AuthUtil.js";
+import dayjs from 'dayjs';
+
 
 
 export default {
@@ -42,37 +52,42 @@ export default {
     return {
       editMode: false,
       editedContent: '',
-      currentUserNo: null // 사용자 id 저장
+      originalContent:'', // 원본 댓글 저장
+      currentUsername: null
     };
   },
   watch: {
     comment: {
       handler(newVal) {
         this.editedContent = newVal.content;
-        this.currentUserNo = Number(getUserInfo()?.userNo);
-        // 🔥 댓글 데이터가 변경될 경우 사용자 정보 다시 확인
+        this.originalContent = newVal.content;  // 초기값 저장
+       this.currentUsername = getUsernameFromToken();
+
+
       },
       immediate: true
     }
   },
   computed: {
     isEditable() {
-      return this.comment.userNo === this.currentUserNo;
+      return this.comment.userName === this.currentUsername;
     },
-    isDeletable() {  // ✅ 삭제는 '작성자' + '관리자'만 가능하도록 수정
+    isDeletable() {
       const userInfo = getUserInfo();
-      return this.comment.userNo === this.currentUserNo || userInfo?.role === 'ADMIN';
+      return this.comment.userName === this.currentUsername || userInfo?.role === 'ADMIN';
     }
   },
   mounted() {
     const userInfo = getUserInfo();
-    if (!userInfo || !userInfo.userNo) {
+    console.log('🔎 getUserInfo()에서 반환한 사용자 정보:', userInfo);
+
+    if (!userInfo) {
       console.warn("❗ 사용자 정보가 없습니다. 로그인 여부를 확인하세요.");
       return;
     }
 
-    console.log('✅ 사용자 정보:', userInfo);
-    this.currentUserNo = Number(userInfo.userNo);
+    this.currentUsername = getUsernameFromToken();
+    console.log('✅ this.currentUsername:', this.currentUsername);
   },
 
   methods: {
@@ -89,24 +104,43 @@ export default {
               Authorization: `Bearer ${getUserInfo().accessToken}`
             }
           });
-          this.$emit('commentUpdated');
+          this.$emit('commentDeleted', this.comment.commentNo);
         } catch (error) {
           alert('❌ 댓글 삭제 실패: ' + (error.response?.data?.message || '알 수 없는 오류'));
         }
       }
     },
     toggleEdit() {
-      this.editMode = !this.editMode;
+      this.editMode = true;           // 수정 모드 활성화
+      this.editedContent = this.comment.content;  // 원본 내용 복사
     },
+    cancelEdit() {  // 추가 (수정 취소 기능)
+      this.editMode = false;          // 수정 모드 비활성화
+      this.editedContent = this.originalContent; // 원래 내용 복원
+    },
+
     async updateComment() {
       try {
-        await axios.post(`http://localhost:8087/comments/${this.comment.commentNo}/update`, {
-          content: this.editedContent
-        }, {
+
+        console.log('🟡 전달될 댓글 데이터:', {
+          content: this.editedContent,
+          postNo: this.comment.postNo
+        });
+        const response = await axios.post(`http://localhost:8087/comments/${this.comment.commentNo}/update`,
+            {content: this.editedContent,
+              postNo: this.comment.postNo
+            },
+            {
           headers: {
-            Authorization: `Bearer ${getUserInfo().accessToken}`
+            Authorization: `Bearer ${getUserInfo().accessToken}`,
+            'Content-Type': 'application/json' // JSON 명시
           }
         });
+
+        // updatedAt 값을 화면에 반영
+        if (response.data.updatedAt) {
+          this.comment.updatedAt = response.data.updatedAt;
+        }
         this.editMode = false;
         this.$emit('commentUpdated');
       } catch (error) {
@@ -115,7 +149,9 @@ export default {
     },
     async toggleLike() {
       try {
-        const response = await axios.post(`http://localhost:8087/comments/${this.comment.commentNo}/like`, {}, {
+        const response = await axios.post(`http://localhost:8087/comments/${this.comment.commentNo}/like`, {
+
+        }, {
           headers: {
             Authorization: `Bearer ${getUserInfo().accessToken}`
           }
@@ -126,7 +162,14 @@ export default {
       } catch (error) {
         alert('❌ 좋아요 처리 실패: ' + (error.response?.data?.message || '알 수 없는 오류'));
       }
+    },
+
+
+
+    formatDate(dateString) {
+      return dayjs(dateString).format('YYYY-MM-DD HH:mm:ss');
     }
+
   }
 };
 </script>
@@ -150,6 +193,11 @@ export default {
   margin-right: 20px;
 }
 
+
+.edited-content-box{
+  border : 1px solid #e5e7eb;
+  width: 700px;
+}
 
 
 .like-bnt-box{

@@ -49,6 +49,7 @@
             v-if="post.postNo"
             ref="commentList"
             :postNo="Number(post.postNo)"
+            @commentDeleted="handleCommentDeleted"
         />
 
       </div>
@@ -74,17 +75,19 @@ export default {
     const post = ref({}); // 반응형 데이터 선언
     const commentList = ref(null);
 
+
     const handleCommentAdded = (newComment) => {
       console.log('✅ 새 댓글 추가:', newComment);
       post.value.commentCount += 1;  // 🔥 댓글 수 즉시 증가
 
-      // 🔥 commentList.value가 null인 경우 방어 처리
+      // commentList.value가 null인 경우 방어 처리
       if (commentList.value) {
-        commentList.value.comments.unshift(newComment);  // 🔥 신규 댓글 즉시 추가
+        commentList.value.comments.unshift(newComment);  //신규 댓글 즉시 추가
       } else {
         console.warn('❗ commentList가 null입니다.');
       }
     };
+
 
     const initParams = {
       page: 1,
@@ -159,6 +162,14 @@ export default {
         alert(error.response.data.message);
       }
     },
+
+
+
+    handleCommentDeleted() {
+      if (this.post.commentCount > 0) {
+        this.post.commentCount -= 1; // 🔥 댓글 수 즉시 감소
+      }
+    }
   },
 };
 </script>

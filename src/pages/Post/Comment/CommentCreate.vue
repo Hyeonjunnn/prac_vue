@@ -50,7 +50,7 @@ export default {
         this.$emit("commentAdded", response.data);
 
         this.commentContent = '';
-        alert("댓글이 작성되었습니다.");
+        //alert("댓글이 작성되었습니다.");
         //this.$emit("commentAdded", response.data)
       } catch (error) {
         console.error('댓글 작성 실패:', error.response?.data || error.message);

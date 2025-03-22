@@ -7,6 +7,7 @@
           :key="comment.commentNo"
           :comment="comment"
           @commentUpdated="fetchComments"
+          @commentDeleted="handleCommentDeleted"
       />
     </div>
   </div>
@@ -42,6 +43,11 @@ export default {
       } catch (error) {
         console.error("❌ 댓글 불러오기 실패:", error);
       }
+    },
+    // 🔥 댓글 삭제 시 리스트에서 제거하고 상위 컴포넌트에 이벤트 전달
+    handleCommentDeleted(deletedCommentNo) {
+      this.comments = this.comments.filter(comment => comment.commentNo !== deletedCommentNo);
+      this.$emit('commentDeleted'); // 🔥 상위 컴포넌트(PostDetail.vue)에 전달
     }
   }
 };
