@@ -18,21 +18,19 @@
                 <div class="message-header">
                     <span class="sender">보낸 사람: {{ message.senderId }}</span>
                     <span class="receiver">받은 사람: {{ message.receiverId }}</span>
-                    <span class="date">받은 날짜: {{ formatDate(message.sendAt) }}</span>
+                    <span class="date">
+                        {{ currentTab === 'sent' ? '보낸 날짜' : '받은 날짜' }}: {{ formatDate(message.sendAt) }}
+                    </span>
+                    <div class="message-content">
+                        <!-- 쪽지 내용 클릭 시 상세 페이지로 이동 -->
+                        <router-link :to="`/messages/${message.no}`">
+                            <p :class="currentTab === 'sent' ? 'read' : (message.read ? 'read' : 'unread')">
+                                {{ message.content.length > 50 ? message.content.substring(0, 50) + '...' :
+                                message.content }}
+                            </p>
+                        </router-link>
+                    </div>
                 </div>
-                <div class="message-content">
-                    <!-- 메시지 내용 클릭 시 상세 페이지로 이동 -->
-                    <router-link :to="`/messages/${message.no}`">
-                        <p :class="currentTab === 'sent' ? 'read' : (message.read ? 'read' : 'unread')">
-                            {{ message.content }}
-                        </p>
-                    </router-link>
-                </div>
-
-                <!-- '안읽음' 표시: 받은 쪽지에만 표시 -->
-                <!-- <div v-if="currentTab === 'received' && !message.read" class="unread-status">
-                    <span class="unread">안읽음</span>
-                </div> -->
 
                 <div class="message-actions">
                     <button class="btn btn-danger" @click="deleteMessage(message.no)">삭제</button>
@@ -41,9 +39,13 @@
 
             <!-- 페이지네이션 -->
             <div class="pagination">
-                <button @click="loadMessages(currentTab, currentPage - 1)" :disabled="currentPage === 1">이전</button>
+                <button @click="loadMessages(currentTab, currentPage - 1)" :disabled="currentPage === 1">〈</button>
+                <button v-for="page in getPageRange()" :key="page" @click="loadMessages(currentTab, page)"
+                    :class="{ active: currentPage === page }">
+                    {{ page }}
+                </button>
                 <button @click="loadMessages(currentTab, currentPage + 1)"
-                    :disabled="currentPage === totalPages">다음</button>
+                    :disabled="currentPage === totalPages">〉</button>
             </div>
         </div>
     </div>
@@ -57,39 +59,61 @@ export default {
     name: 'MessageList',
     data() {
         return {
-            messages: [],  // 메시지 목록
+            messages: [],  // 쪽지 목록
             currentPage: 1,  // 현재 페이지
             totalPages: 1,  // 전체 페이지 수
             currentTab: 'received',  // 기본적으로 받은 쪽지 목록
             unreadCount: 0,  // 안 읽은 쪽지 개수
+            perPage: 10,  // 한 페이지당 표시할 쪽지 수
         };
     },
     mounted() {
+        // URL에서 쿼리 파라미터로 페이지 번호를 읽어옵니다.
+        const page = this.$route.query.page || 1;  // 기본값 1로 설정
+        const type = this.$route.query.type || 'received';  // 기본값 'received'로 설정
+        this.currentPage = parseInt(page, 10);
+        this.currentTab = type;
+
+        // 로드한 페이지 번호에 맞춰 쪽지 목록을 불러옵니다.
         this.loadMessages(this.currentTab, this.currentPage);
         this.getUnreadMessages();  // 안 읽은 쪽지 개수 불러오기
     },
     methods: {
-        async loadMessages(tab, page) {
+        async loadMessages(type, page) {
             try {
                 const token = getUserInfo().accessToken;
-                const userNo = getUserInfo().userNo;  // 사용자 ID (No)
-                const url = `http://localhost:8087/messages/list/${tab}?page=${page - 1}&size=10&sort=no,desc`;
+
+                // URL 및 파라미터 설정
+                const url = new URL(`http://localhost:8087/messages`);
+                const params = new URLSearchParams({
+                    type: type,
+                    page: page - 1,
+                    size: this.perPage,
+                    sort: "no,desc"
+                });
+
+                url.search = params.toString();
+
+                // 요청 설정
                 const config = {
                     headers: {
-                        'Authorization': 'Bearer ' + token,
+                        'Authorization': `Bearer ${token}`,
                     },
                 };
 
-                const response = await axios.get(url, config);
+                const response = await axios.get(url.toString(), config);
                 if (response.status === 200) {
-                    this.messages = response.data.content;  // 메시지 목록
-                    this.currentPage = response.data.pageable.pageNumber + 1;  // 현재 페이지 번호
-                    this.totalPages = response.data.totalPages;  // 전체 페이지 수
-                    this.currentTab = tab;  // 탭 상태 업데이트
+                    this.messages = response.data.content;
+                    this.currentPage = response.data.pageable.pageNumber + 1;
+                    this.totalPages = response.data.totalPages;
+                    this.currentTab = type;
+
+                    // 페이지 번호와 타입을 쿼리 파라미터에 반영
+                    this.$router.push({ query: { type: this.currentTab, page: this.currentPage } });
                 }
             } catch (error) {
-                console.error('메시지 목록 불러오기 실패:', error);
-                alert('메시지 목록을 불러오는 데 실패했습니다.');
+                console.error('쪽지 목록 불러오기 실패:', error);
+                alert('쪽지 목록을 불러오는 데 실패했습니다.');
             }
         },
         async deleteMessage(messageNo) {
@@ -104,12 +128,12 @@ export default {
 
                 const response = await axios.delete(url, config);
                 if (response.status === 200) {
-                    alert('메시지가 삭제되었습니다.');
-                    window.location.reload();  // 페이지 전체 새로고침
+                    alert('쪽지가 삭제되었습니다.');
+                    this.loadMessages(this.currentTab, this.currentPage);  // 삭제 후 페이지 새로고침
                 }
             } catch (error) {
-                console.error('메시지 삭제 실패:', error);
-                alert('메시지 삭제 실패');
+                console.error('쪽지 삭제 실패:', error);
+                alert('쪽지 삭제 실패');
             }
         },
         async getUnreadMessages() {
@@ -125,6 +149,16 @@ export default {
             } catch (error) {
                 console.error('안 읽은 쪽지 개수 불러오기 실패:', error);
             }
+        },
+        getPageRange() {
+            const range = [];
+            const start = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
+            const end = Math.min(start + 4, this.totalPages);
+
+            for (let i = start; i <= end; i++) {
+                range.push(i);
+            }
+            return range;
         },
         formatDate(date) {
             // 날짜 포맷 (예: 2025-03-16 14:30)
@@ -156,28 +190,40 @@ button.active {
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .message-header {
-    font-size: 14px;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .sender,
-.receiver {
+.receiver,
+.date {
     font-weight: bold;
 }
 
-.date {
-    font-style: italic;
-}
-
 .message-content {
-    margin-bottom: 10px;
+    margin-top: 10px;
+    max-width: 500px;
+    /* 내용이 길어지면 가로 폭을 제한 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 50자 이상일 경우 '...' 표시 */
 }
 
 .message-actions button {
     margin-right: 10px;
+    white-space: nowrap;
+    /* 텍스트를 한 줄로 표시 */
+    padding: 10px 20px;
+    /* 버튼의 크기 조정 */
+    font-size: 14px;
+    /* 버튼 글자 크기 조정 */
 }
 
 .pagination {
@@ -191,6 +237,17 @@ button.active {
     cursor: pointer;
 }
 
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+}
+
 .unread-status {
     margin-top: 10px;
     color: red;
@@ -202,7 +259,6 @@ button.active {
 
 .read {
     color: #6b6b6b;
-    /* grey와 darkgrey 중간 */
 }
 
 .unread-badge {
@@ -213,11 +269,5 @@ button.active {
     padding: 3px 6px;
     border-radius: 50%;
     margin-left: 5px;
-}
-
-.button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
 }
 </style>

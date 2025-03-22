@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 // const pathsToRoles = [
 //     {path: '/', role: ['USER', 'ADMIN']},
@@ -66,7 +67,6 @@ const refreshToken = async () => {
             'Authorization': `Bearer ${refreshToken}`,
         },
     };
-
     try {
         const response = await axios.post(url, {}, config);
         const user = response.data;
@@ -83,6 +83,26 @@ const refreshToken = async () => {
     } catch (error) {
         setUserInfo(null);
     }
+
+
+const getUsernameFromToken = () => {
+    const userInfo = getUserInfo();
+    const token = userInfo?.accessToken;
+
+    if (!token) {
+        console.warn("❗ 토큰이 존재하지 않습니다.");
+        return null;
+    }
+
+    try {
+        const decoded = jwtDecode(token);  // 🔥 JWT 디코딩
+        console.log("🔎 디코딩된 JWT 정보:", decoded);  // 🔥 디버깅 포인트
+        return decoded.username || null;     // 🔥 username 반환
+    } catch (error) {
+        console.warn("❗ JWT 디코딩 실패:", error);
+        return null;
+    }
 }
 
-export { getUserInfo, loginProcess, logoutProcess, refreshToken }
+
+export { getUserInfo, loginProcess, logoutProcess, refreshToken, getUsernameFromToken }
