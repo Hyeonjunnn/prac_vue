@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <h2>신고 상세</h2>
+      <h2>신고 처리</h2>
       <div v-if="report">
         <div class="report-info">
           <h3>신고 번호: {{ report.no }}</h3>
@@ -11,7 +11,7 @@
           <p><strong>신고 상태:</strong>
             <select v-model="reportStatus">
               <option v-for="status in reportStatuses" :key="status" :value="status">
-                {{ status }}
+                {{ getStatusText(status) }}
               </option>
             </select>
           </p>
@@ -54,9 +54,20 @@ export default {
     const route = useRoute();
     const reportNo = route.params.reportNo; // 라우트에서 reportNo 가져오기
     const report = ref(null); // 반응형 변수 선언
-    const reportStatuses = ['PENDING', 'COMPLETED', 'ONLY_BANNED', 'BANNED']; // ReportStatus Enum 값
+    const reportStatuses = ref(['PENDING', 'COMPLETED', 'ONLY_BANNED', 'BANNED']); // ReportStatus Enum 값
     const reportStatus = ref('PENDING'); // 신고 상태
     const reportComment = ref(''); // 관리자 메모
+
+    // 상태 값을 한글로 변환하는 함수
+    const getStatusText = (status) => {
+      const statusMap = {
+        'PENDING': '대기 중',
+        'COMPLETED': '처리 완료',
+        'ONLY_BANNED': '부분 차단',
+        'BANNED': '완전 차단'
+      };
+      return statusMap[status] || status;
+    };
 
     // 신고 상세 정보를 가져오는 함수
     const fetchReportDetail = async () => {
@@ -121,7 +132,8 @@ export default {
       reportStatuses, 
       reportStatus, 
       reportComment, 
-      updateReport 
+      updateReport, 
+      getStatusText 
     };
   }
 };
