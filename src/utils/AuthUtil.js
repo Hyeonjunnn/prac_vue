@@ -83,6 +83,7 @@ const refreshToken = async () => {
     } catch (error) {
         setUserInfo(null);
     }
+}
 
 
 const getUsernameFromToken = () => {
