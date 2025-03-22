@@ -67,7 +67,6 @@ const refreshToken = async () => {
             'Authorization': `Bearer ${refreshToken}`,
         },
     };
-
     try {
         const response = await axios.post(url, {}, config);
         const user = response.data;
@@ -84,7 +83,7 @@ const refreshToken = async () => {
     } catch (error) {
         setUserInfo(null);
     }
-}
+
 
 const getUsernameFromToken = () => {
     const userInfo = getUserInfo();
