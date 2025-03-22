@@ -17,9 +17,9 @@ import ProjectWrite from "@/pages/Project/ProjectWrite.vue";
 import TeamList from "@/pages/team/TeamList.vue";
 import TeamDeteil from "@/pages/team/TeamDeteil.vue";
 import TeamWrite from "@/pages/team/TeamWrite.vue";
-import ReportCreate from '@/pages/report/ReportCreate.vue';
-import ReportList from '@/pages/report/ReportList.vue';
-import ReportDetails from '@/pages/report/ReportDetails.vue';
+import ReportCreate from "@/pages/report/ReportCreate.vue";
+import ReportList from "@/pages/report/ReportList.vue";
+import ReportDetails from "@/pages/report/ReportDetails.vue";
 import CommentList from "@/pages/Post/Comment/CommentList.vue";
 import CommentCreate from "@/pages/Post/Comment/CommentCreate.vue";
 import UserList from "@/pages/Admin/UserList.vue";
@@ -48,7 +48,7 @@ const router = createRouter({
     {path: "/messages/write", component: MessageCreate},
     {path: "/messages/:messageNo", component: MessageDetails},
     {path: "/team", name: "TeamList", component: TeamList},
-    {path: "/team/:teamtNo", name: "TeamDetailt", component: TeamDeteil},
+    {path: "/team/:teamNo", name: "TeamDetailt", component: TeamDeteil},
     {path: "/team/write", name: "TeamWrite", component: TeamWrite},
     { path: '/reports/write', component: ReportCreate},
     { path: '/reports', component: ReportList},

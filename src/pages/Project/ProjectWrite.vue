@@ -11,17 +11,23 @@
             <div class="grid grid-cols-1 gap-6 mt-4">
               <div>
                 <label class="text-gray-700" for="title">제목</label>
-                <input class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" type="text" v-model="title" />
+                <input
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  type="text" v-model="title" />
               </div>
 
               <div>
                 <label class="text-gray-700" for="content">내용</label>
-                <textarea class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="content"></textarea>
+                <textarea
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  v-model="content"></textarea>
               </div>
 
               <div class="form-group">
                 <label htmlFor="projectStatus" class="text-gray-700">프로젝트 타입</label>
-                <select id="projectStatus" class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="projectStatus">
+                <select id="projectStatus"
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  v-model="projectStatus">
                   <option value="OPEN">공개</option>
                   <option value="CLOSED">닫힘</option>
                   <option value="IN_PROGRESS">진행중</option>
@@ -31,7 +37,8 @@
             </div>
 
             <div class="flex justify-end mt-4">
-              <button type="submit" class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+              <button type="submit"
+                class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
                 {{ isEditMode ? "수정" : "저장" }}
               </button>
             </div>
@@ -75,7 +82,7 @@ export default {
 
       if (isEditMode.value) {
         axios
-          .post(`http://localhost:8087/projects/${projectNo.value}`, params, config)
+          .post(`http://localhost:8087/project/${projectNo.value}`, params, config)
           .then(() => {
             alert("프로젝트이 수정되었습니다.");
             console.log(params);
@@ -86,7 +93,7 @@ export default {
           });
       } else {
         axios
-          .post("http://localhost:8087/projects", params, config)
+          .post("http://localhost:8087/project", params, config)
           .then(() => {
             alert("프로젝트이 작성되었습니다.");
             router.push(`/project/${projectNo.value}`); // 작성 후 상세 페이지로 이동

@@ -11,17 +11,23 @@
             <div class="grid grid-cols-1 gap-6 mt-4">
               <div>
                 <label class="text-gray-700" for="title">제목</label>
-                <input class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" type="text" v-model="title" />
+                <input
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  type="text" v-model="title" />
               </div>
 
               <div>
                 <label class="text-gray-700" for="content">내용</label>
-                <textarea class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="content"></textarea>
+                <textarea
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  v-model="content"></textarea>
               </div>
 
               <div class="form-group">
                 <label htmlFor="boardType" class="text-gray-700">게시글 타입</label>
-                <select id="boardType" class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="boardType">
+                <select id="boardType"
+                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  v-model="boardType">
                   <option value="FREE">자유게시판</option>
                   <option value="NOTICE">공지사항</option>
                   <option value="PROJECT_RECRUIT">프로젝트 구인</option>
@@ -30,7 +36,8 @@
             </div>
 
             <div class="flex justify-end mt-4">
-              <button type="submit" class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+              <button type="submit"
+                class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
                 {{ isEditMode ? "수정" : "저장" }}
               </button>
             </div>
@@ -88,8 +95,9 @@ export default {
       } else {
         axios
           .post("http://localhost:8087/posts", params, config)
-          .then(() => {
+          .then((response) => {
             alert("게시글이 작성되었습니다.");
+            postNo.value = response.data.postNo;
             router.push(`/post/${postNo.value}`); // 작성 후 상세 페이지로 이동
           })
           .catch((error) => {
