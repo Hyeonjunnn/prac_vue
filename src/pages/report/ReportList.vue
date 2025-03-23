@@ -24,8 +24,8 @@
             <tbody>
                 <tr v-for="report in reports" :key="report.no">
                     <td>{{ report.no }}</td>
-                    <td>{{ report.reporterId }}</td>
-                    <td>{{ report.reportedId }}</td>
+                    <td>{{ report.reporterUsername }}</td>
+                    <td>{{ report.reportedUsername }}</td>
                     <td>{{ report.reportType }}</td>
                     <td>{{ getStatusText(report.reportStatus) }}</td>
                     <td>{{ report.reportTime }}</td>

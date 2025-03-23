@@ -10,9 +10,10 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 
 const goBack = () => {
   router.back();

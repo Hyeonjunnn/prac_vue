@@ -16,8 +16,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="comment in comments" :key="comment.commentNo">
-        <td>{{ comment.commentNo }}</td>
+      <tr v-for="(comment, index) in comments" :key="comment.commentNo">
+        <td>{{ currentPage * 10 + index + 1 }}</td>
         <td>{{ comment.content }}</td>
         <td>{{ comment.postNo }}</td>
         <td>{{ comment.likeCount }}</td>
@@ -47,6 +47,7 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const userNo = route.params.userNo;
+
 const comments = ref([]);
 const userName = ref('');
 const currentPage = ref(0);
@@ -74,10 +75,9 @@ const fetchComments = async () => {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }
     });
-    console.log(res.data.content);
+
     comments.value = res.data.content;
     totalPages.value = res.data.totalPages;
-
 
 
 
@@ -123,7 +123,7 @@ const nextPage = () => {
 };
 
 const goBack = () => {
-  router.push(`/admin/user/${userNo}`);
+  router.back();
 };
 
 onMounted(fetchComments);

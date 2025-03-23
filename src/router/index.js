@@ -26,6 +26,7 @@ import UserList from "@/pages/Admin/UserList.vue";
 import UserDetail from "@/pages/Admin/UserDetail.vue";
 import AllUserComments from "@/pages/Admin/AllUserComments.vue";
 import UserAllPost from "@/pages/Admin/UserAllPost.vue";
+import NotificationBox from "@/pages/NotificationBox.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -56,6 +57,7 @@ const router = createRouter({
         {path: "/project", name: "ProjectList", component: ProjectList},
         {path: "/project/:projectNo", name: "ProjectDetail", component: ProjectDetail},
         {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
+        {path: "/notificationBox", name: "NotificationBox", component: NotificationBox},
 
         {path: "/notFound", component: NotFound},
         {path: "/:pathMatch(.*)*", redirect: "/notFound"},
