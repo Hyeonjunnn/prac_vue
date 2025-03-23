@@ -8,7 +8,7 @@
     <div class="col">
       <div class="form-group">
         <label for="receiverId">받는 사람 ID :</label>
-        <input type="text" class="form-control" id="receiverId" v-model="messageItem.receiverId" />
+        <input type="text" class="form-control" id="receiverId" v-model="messageItem.receiverUsername" />
       </div>
       <div class="form-group">
         <label for="content">쪽지 내용 :</label>
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       messageItem: {
-        receiverId: '',
+        receiverUsername: '',
         content: ''
       }
     };
@@ -51,7 +51,7 @@ export default {
       try {
         const url = 'http://localhost:8087/messages';
         const data = {
-          receiverId: this.messageItem.receiverId,
+          receiverUsername: this.messageItem.receiverUsername,
           content: this.messageItem.content
         };
         const token = getUserInfo().accessToken;

@@ -7,8 +7,8 @@
   <div class="row">
     <div class="col">
       <div class="form-group">
-        <label for="reportedId">신고할 대상 ID :</label>
-        <input type="text" class="form-control" id="reportedId" v-model="reportItem.reportedId"
+        <label for="reportedId">유저 ID :</label>
+        <input type="text" class="form-control" id="reportedId" v-model="reportItem.reportedUsername"
           placeholder="ID를 입력해주세요" />
       </div>
       <div class="form-group">
@@ -52,7 +52,7 @@ export default {
   setup() {
     const router = useRouter();
     const reportItem = reactive({
-      reportedId: "",
+      reportedUsername: "",
       reportType: "",
       content: "",
       url: "",
@@ -64,7 +64,7 @@ export default {
 
         const url = "http://localhost:8087/reports";
         const data = {
-          reportedId: reportItem.reportedId,
+          reportedUsername: reportItem.reportedUsername,
           reportType: reportItem.reportType,
           content: reportItem.content,
           url: reportItem.url,

@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 const setUserInfo = (userInfo) => {
     if (userInfo && userInfo.accessToken && userInfo.refreshToken) {
         window.localStorage.setItem('userInfo', JSON.stringify(userInfo));
-    } else{
+    } else {
         window.localStorage.removeItem('userInfo');
     }
 }
@@ -25,7 +25,7 @@ const getUserInfo = () => {
 
 const loginProcess = async (username, password, successCallback, failCallback) => {
     const url = "http://localhost:8087/auth/login";
-    const data = {username, password};
+    const data = { username, password };
 
     const response = await axios.post(url, data);
     const user = response.data;
@@ -86,24 +86,24 @@ const refreshToken = async () => {
 }
 
 
-const getUsernameFromToken = () => {
-    const userInfo = getUserInfo();
-    const token = userInfo?.accessToken;
+    const getUsernameFromToken = () => {
+        const userInfo = getUserInfo();
+        const token = userInfo?.accessToken;
 
-    if (!token) {
-        console.warn("❗ 토큰이 존재하지 않습니다.");
-        return null;
+        if (!token) {
+            console.warn("❗ 토큰이 존재하지 않습니다.");
+            return null;
+        }
+
+        try {
+            const decoded = jwtDecode(token);  // 🔥 JWT 디코딩
+            console.log("🔎 디코딩된 JWT 정보:", decoded);  // 🔥 디버깅 포인트
+            return decoded.username || null;     // 🔥 username 반환
+        } catch (error) {
+            console.warn("❗ JWT 디코딩 실패:", error);
+            return null;
+        }
     }
-
-    try {
-        const decoded = jwtDecode(token);  // 🔥 JWT 디코딩
-        console.log("🔎 디코딩된 JWT 정보:", decoded);  // 🔥 디버깅 포인트
-        return decoded.username || null;     // 🔥 username 반환
-    } catch (error) {
-        console.warn("❗ JWT 디코딩 실패:", error);
-        return null;
-    }
-}
-
-
+    
 export { getUserInfo, loginProcess, logoutProcess, refreshToken, getUsernameFromToken }
+
