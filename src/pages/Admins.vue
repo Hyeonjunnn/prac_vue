@@ -1,41 +1,91 @@
 <template>
-    <div>
-        <h2>Admins</h2>
-        <p>admins 역할이 있어야만 접근할 수 있는 페이지</p>
-        <p>토큰 : {{ userInfo.accessToken }}</p>
-         <p>사용자 : {{ userInfo.userName }}</p>
-         <p>사용자의 역할 : {{ userInfo.role }}</p>
-        <button @click="logout">로그아웃</button>
+
+    <div class="admin-page" v-if="isLoggedIn">
+      <h2>Admins</h2>
+      <button @click="logout">로그아웃</button>
+
+      <RouterLink v-if="isLoggedIn" to="/admin/users">
+        <button class="user-btn">유저 목록 보기</button>
+      </RouterLink>
+
+      <RouterLink v-if="isLoggedIn" to="/admin/feedbacks">
+        <button class="user-btn">피드백 목록 보기</button>
+      </RouterLink>
+
+      <RouterLink v-if="isLoggedIn" to="/admin/projects">
+        <button class="user-btn">프로젝트 목록 보기</button>
+      </RouterLink>
+
+      <RouterLink v-if="isLoggedIn" to="/admin/tech">
+        <button class="user-btn">Tech 목록 보기</button>
+      </RouterLink>
     </div>
 
-    <RouterLink to="/admin/users">
-      <button>유저 목록 보기</button>
-    </RouterLink>
+    <div v-else>
+      <p>로그인이 필요합니다.</p>
+    </div>
+
 
 </template>
 
-<script>
-import { getUserInfo, logoutProcess } from '@/utils/AuthUtil.js';
-import { useRouter } from 'vue-router';
-import UserList from "@/pages/Admin/UserList.vue";
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { getUserInfo, logoutProcess } from '@/utils/AuthUtil.js'
 
-export default {
-    name : 'Admins',
-    components: {
-      UserList : UserList
-    },
-    setup() {
-        const router = useRouter();
-        const userInfo = getUserInfo();
-        const logout = () => {
-            logoutProcess(() => {
-                router.push('/');
-            });
-        };
-        const goToUserList = () => {
-          router.push('/admin/users');
-        };
-        return { userInfo, logout , goToUserList};
-    }
-}
+const router = useRouter()
+
+
+const isLoggedIn = computed(() => {
+  return !!localStorage.getItem('accessToken')
+})
+
+
+
 </script>
+
+<style scoped>
+
+h2 {
+  color: #343a40;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+button {
+  padding: 10px 18px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+}
+
+.user-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.user-btn:hover {
+  background-color: #0056b3;
+}
+</style>
