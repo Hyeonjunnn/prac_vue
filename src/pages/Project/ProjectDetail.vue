@@ -10,19 +10,9 @@
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="space-y-6">
-                <!-- 제목 -->
-                <h1 class="text-3xl font-bold text-black">
-                    {{ project.name }}
-                </h1>
-
-                <!-- 내용 -->
-                <div class="prose max-w-none text-black">
-                    <p class="text-gray-500 leading-relaxed">
-                        {{ project.content }}
-                    </p>
-                </div>
+            <!-- 프로젝트 상세 -->
+            <div>
+                <ProjectInfo :project="project" v-if="project.name" />
             </div>
             <!-- Tags 샘플로 남겨둠 -->
             <!-- <div class="mt-8 flex flex-wrap gap-2">
@@ -40,7 +30,7 @@
         >
       </div> -->
             <!-- 수정 삭제 -->
-            <div>
+            <div v-if="leader">
                 <br />
                 <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="goToEditPage">수정</button>
                 <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(project.no)">삭제</button>
@@ -51,16 +41,33 @@
 </template>
 <script>
 import {useRoute, useRouter} from "vue-router";
+import {getUserInfo} from "@/utils/AuthUtil.js";
 import {ref} from "vue";
 import axios from "axios";
+import ProjectInfo from "@/components/project/ProjectInfo.vue";
 export default {
     name: "ProjectDetail",
+    components: {
+        ProjectInfo,
+    },
     setup() {
         // 초기 데이터 설정
         const route = useRoute(); // 현재 URL 정보 가져옴
         const router = useRouter(); // 경로 이동 (라우트를 이동하거나 상태 변경할때 사용)
         const projectNo = route.params.projectNo; // 경로에 포함된 번호를 가져옴
         const project = ref({}); // 반응형 데이터 선언
+        const leader = ref(false); // 팀장 확인
+        const teamNo = ref();
+
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getUserInfo().accessToken,
+            },
+            params: {
+                projectNo: projectNo,
+            },
+        };
 
         // 상세 정보 가져와서 project에 넣음
         axios
@@ -68,54 +75,70 @@ export default {
             .then((response) => {
                 if (response.status === 200) {
                     project.value = response.data;
-                } else {
-                    alert("데이터 조회 실패");
                 }
+                return axios
+                    .get(`http://localhost:8087/team/leader-role`, config)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            leader.value = true; // 팀장 확인됨
+                            teamNo.value = response.data.teamNo;
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error.response.data.message);
+                    });
             })
             .catch((error) => {
                 console.error("데이터를 불러오는 중, 오류 발생함");
+                console.log(error);
             });
 
         // 게시글 수정용 데이터
         const goToEditPage = () => {
             router.push({
-                name: "AddProject",
+                name: "ProjectWrite",
                 query: {
-                    projectNo: project.value.projectNo,
+                    teamNo: teamNo.value,
+                    projectNo: projectNo,
                     name: project.value.name,
                     content: project.value.content,
-                    boardType: project.value.boardType,
+                    techsNo: project.value.projectTeches,
+                    status: project.value.projectStatus,
                 },
             });
+            console.log("확인용", project.value);
+        };
+
+        // 삭제 확인 창
+        const confirmDelete = (projectNo) => {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                // 삭제 처리 로직 호출
+                deleteProjectData(projectNo);
+            }
+        };
+        // 게시글 삭제
+        const deleteProjectData = (projectNo) => {
+            axios
+                .delete(`http://localhost:8087/project/${projectNo}`, config)
+                .then(() => {
+                    // 게시글을 삭제한 후 기존 페이지로 돌려보냄
+                    router.push("/project");
+                })
+                .catch((error) => {
+                    console.error("게시글 삭제 실패", error);
+                });
         };
 
         // 메소드 반환
         return {
             project,
+            leader,
             goToEditPage,
+            confirmDelete,
+            deleteProjectData,
         };
     },
-    methods: {
-        // 삭제 확인 창
-        confirmDelete(projectNo) {
-            if (confirm("정말로 삭제하시겠습니까?")) {
-                // 삭제 처리 로직 호출
-                this.deleteProjectData(projectNo);
-            }
-        },
-        // 게시글 삭제
-        deleteProjectData(projectNo) {
-            axios
-                .delete(`/project/${projectNo}`)
-                .then(() => {
-                    // 게시글을 삭제한 후 기존 페이지로 돌려보냄
-                    this.$router.push("/projects");
-                })
-                .catch((error) => {
-                    console.error("게시글 삭제 실패", error);
-                });
-        },
-    },
+    methods: {},
 };
 </script>
 
