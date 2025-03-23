@@ -19,8 +19,8 @@
                 </p>
             </div>
         </div>
-        <router-link :to="`/project/${project.teamNo}`">
-            <button class="view-more-button">자세히 보기</button>
+        <router-link :to="`/project/${project.teamNo}`" v-if="project.teamNo">
+            <button class="view-more-button">프로젝트 자세히 보기</button>
         </router-link>
     </div>
 </template>
@@ -32,6 +32,9 @@ defineProps({
     project: {
         type: Object,
         required: true,
+    },
+    team: {
+        type: Object,
     },
 });
 </script>

@@ -13,17 +13,16 @@
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div v-if="project.name">
-                <ProjectInfo :project="project" />
-            </div>
-
-            <div class="space-y-6" v-else>
-                <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
-                <div v-if="leader">
-                    <router-link to="/project/write">
-                        <button class="category-button">프로젝트 생성</button>
-                    </router-link>
+            <!-- 프로젝트 상세 -->
+            <div>
+                <ProjectInfo :project="project" v-if="project.name" />
+                <div class="space-y-6" v-else>
+                    <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
+                    <div v-if="leader">
+                        <router-link :to="{name: 'ProjectWrite', query: {teamNo: team.no, projectNo: project && project.no}}">
+                            <button class="category-button">프로젝트 생성</button>
+                        </router-link>
+                    </div>
                 </div>
             </div>
 
@@ -67,6 +66,9 @@ export default {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + getUserInfo().accessToken,
             },
+            params: {
+                teamNo: teamNo,
+            },
         };
 
         // 상세 정보 가져와서 team에 넣음
@@ -80,14 +82,14 @@ export default {
             project.value = response.data.project;
 
             return axios
-                .get(`http://localhost:8087/team/${teamNo}/leader-role`, config)
+                .get(`http://localhost:8087/team/leader-role`, config)
                 .then((response) => {
                     if (response.status === 200) {
                         leader.value = true; // 팀장 확인됨
                     }
                 })
                 .catch((error) => {
-                    console.log(error.response.data.message);
+                    console.log(error.response);
                 });
         });
 
@@ -110,6 +112,7 @@ export default {
             project,
             leader,
             goToEditPage,
+            // goToProjectCreatePage,
         };
     },
     methods: {
@@ -168,6 +171,15 @@ export default {
                     alert(error.response.data.message);
                 });
         },
+
+        // goToProjectCreatePage(projectNo) {
+        //     this.$router.push({
+        //         name: "ProjectWrite",
+        //         query: {
+        //             teamNo: this.team.no,
+        //         },
+        //     });
+        // },
     },
 };
 </script>
