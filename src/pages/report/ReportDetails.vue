@@ -4,8 +4,8 @@
       <div v-if="report">
         <div class="report-info">
           <h3>신고 번호: {{ report.no }}</h3>
-          <p><strong>신고자 ID:</strong> {{ report.reporterId }}</p>
-          <p><strong>신고 대상 ID:</strong> {{ report.reportedId }}</p>
+          <p><strong>신고자 ID:</strong> {{ report.reporterUsername }}</p>
+          <p><strong>신고 대상 ID:</strong> {{ report.reportedUsername }}</p>
           <p><strong>신고 타입:</strong> {{ report.reportType }}</p>
           <!-- 신고 상태 셀렉트박스 -->
           <p><strong>신고 상태:</strong>
