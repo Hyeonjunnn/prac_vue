@@ -51,8 +51,6 @@ export default {
             .get("http://localhost:8087/techs/get", config)
             .then((response) => {
                 this.techs = response.data;
-                console.log(this.techs);
-                console.log(this.initialTechs);
                 // 초기 선택 상태 설정
                 this.selectedTechs = this.techs.filter((tech) => this.initialTechs.includes(tech.techName));
             })

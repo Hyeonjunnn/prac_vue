@@ -12,13 +12,13 @@
           </option>
         </select>
       </div>
-      <div class="relative">
+      <div class="relative" v-if="selectOption.length > 1">
         <select v-model="selectOption" class="select-box">
           <option v-for="option in selectOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
         </select>
       </div>
     </div>
-    <div class="relative block mt-2 sm:mt-0">
+    <div class="relative block mt-2 sm:mt-0" v-if="searchFalse !== true">
       <input v-model="searchQuery" @keydown.enter="emitSearch" placeholder="검색어를 입력해주세요" class="search-input" />
     </div>
   </div>
@@ -43,6 +43,10 @@ export default {
       type: Array,
       default: () => [{value: "", label: "전체"}],
     },
+    searchFalse: {
+      type: Boolean,
+      default: false,
+    }
   },
   // 기본 값
   data() {
@@ -51,6 +55,7 @@ export default {
       postSortOption: this.postSortOptions[0].value,
       selectOption: this.selectOptions[0].value,
       searchQuery: "",
+      searchFalse: this.searchFalse,
     };
   },
   // 부모에게 보내는 값

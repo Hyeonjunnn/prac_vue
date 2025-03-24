@@ -17,6 +17,9 @@ import ProjectWrite from "@/pages/Project/ProjectWrite.vue";
 import TeamList from "@/pages/team/TeamList.vue";
 import TeamDeteil from "@/pages/team/TeamDeteil.vue";
 import TeamWrite from "@/pages/team/TeamWrite.vue";
+import ScheduleList from "@/pages/Schedule/ScheduleList.vue";
+import ScheduleWrite from "@/pages/Schedule/ScheduleWrite.vue";
+import ScheduleDeteil from "@/pages/Schedule/ScheduleDeteil.vue";
 import ReportCreate from "@/pages/report/ReportCreate.vue";
 import ReportList from "@/pages/report/ReportList.vue";
 import ReportDetails from "@/pages/report/ReportDetails.vue";
@@ -51,6 +54,9 @@ const router = createRouter({
         {path: "/team", name: "TeamList", component: TeamList},
         {path: "/team/:teamNo", name: "TeamDetailt", component: TeamDeteil},
         {path: "/team/write", name: "TeamWrite", component: TeamWrite},
+        {path: "/schedule/team/:teamNo/", name: "ScheduleList", component: ScheduleList},
+        {path: "/schedule/team/:teamNo/write", name: "ScheduleWrite", component: ScheduleWrite},
+        {path: "/schedule/team/:teamNo/deteil/:scheduleNo", name: "ScheduleDeteil", component: ScheduleDeteil},
         {path: "/reports/write", component: ReportCreate},
         {path: "/reports", component: ReportList},
         {path: "/reports/:reportNo", component: ReportDetails},
@@ -58,6 +64,7 @@ const router = createRouter({
         {path: "/project/:projectNo", name: "ProjectDetail", component: ProjectDetail},
         {path: "/project/write", name: "ProjectWrite", component: ProjectWrite},
         {path: "/notificationBox", name: "NotificationBox", component: NotificationBox},
+
 
         {path: "/notFound", component: NotFound},
         {path: "/:pathMatch(.*)*", redirect: "/notFound"},

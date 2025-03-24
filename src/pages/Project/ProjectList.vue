@@ -80,7 +80,7 @@ export default {
       // 정렬 옵션
       postSortOptions: [
         {value: "LATEST", label: "최신순"},
-        // {value: "VIEW", label: "조회수"},
+        {value: "VIEW", label: "조회수"},
       ],
       // 검색 옵션
       selectOptions: [

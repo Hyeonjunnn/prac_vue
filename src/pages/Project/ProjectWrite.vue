@@ -75,9 +75,7 @@ export default {
         const isEditMode = ref(!!route.query.name);
         const initialTechs = ref(route.query.techsNo) // 초기 기술 번호 목록
         const selectedTechs = ref([]); // 선택된 기술 목록
-
-        console.log(initialTechs);
-
+        
         const handleSelectedTechs = (techs) => {
             selectedTechs.value = techs.map(item => item.no);; // 기술 배열 갱신
         };

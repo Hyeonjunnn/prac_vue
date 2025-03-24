@@ -71,8 +71,11 @@ export default {
                     .get(`http://localhost:8087/team/leader-role`, config)
                     .then((response) => {
                         if (response.status === 200) {
-                            leader.value = true; // 팀장 확인됨
+                            if(response.data.isLeader){
+                            leader.value = true;
                             teamNo.value = response.data.teamNo;
+                            }
+                            
                         }
                     })
                     .catch((error) => {
