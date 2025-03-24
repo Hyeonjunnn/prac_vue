@@ -6,9 +6,10 @@
           <option v-for="item in sizeOptions" :key="item">{{ item }}</option>
         </select>
       </div>
-      <div class="relative">
+      <div class="relative" v-if="postSortOptions.length > 1">
         <select v-model="postSortOption" @change="emitSearch" class="select-box">
-          <option v-for="option in postSortOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          <option v-for="option in postSortOptions" :key="option.value" :value="option.value">{{ option.label }}
+          </option>
         </select>
       </div>
       <div class="relative">
@@ -70,7 +71,8 @@ export default {
 .select-box {
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid #cbd5e0; /* gray-400 */
+  border: 1px solid #cbd5e0;
+  /* gray-400 */
   border-radius: 0.375rem;
   background-color: white;
 }
@@ -78,7 +80,8 @@ export default {
 .search-input {
   width: 100%;
   padding: 0.5rem 2rem 0.5rem 2.5rem;
-  border: 1px solid #cbd5e0; /* gray-400 */
+  border: 1px solid #cbd5e0;
+  /* gray-400 */
   border-radius: 0.375rem;
 }
 </style>

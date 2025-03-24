@@ -3,7 +3,8 @@
         <div class="max-w-7xl w-full mx-auto p-4 bg-white">
             <!-- Author Section -->
             <div class="flex items-center space-x-4 mb-6">
-                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar" class="w-12 h-12 rounded-full" />
+                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar"
+                    class="w-12 h-12 rounded-full" />
                 <div>
                     <h3 class="font-semibold">{{ team.name }}</h3>
                     <p class="text-gray-500 text-sm">
@@ -19,7 +20,8 @@
                 <div class="space-y-6" v-else>
                     <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
                     <div v-if="leader">
-                        <router-link :to="{name: 'ProjectWrite', query: {teamNo: team.no, projectNo: project && project.no}}">
+                        <router-link
+                            :to="{ name: 'ProjectWrite', query: { teamNo: team.no, projectNo: project && project.no } }">
                             <button class="category-button">프로젝트 생성</button>
                         </router-link>
                     </div>
@@ -28,14 +30,20 @@
 
             <!-- 팀원 신청 버튼 -->
             <div v-if="(team.status === 'OPEN') & !leader">
-                <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="confirmJoin(team.no)">가입 신청</button>
+                <button
+                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                    @click="confirmJoin(team.no)">가입 신청</button>
             </div>
 
             <!-- 수정 삭제 -->
             <div v-if="leader">
                 <br />
-                <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="goToEditPage">수정</button>
-                <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(team.no)">삭제</button>
+                <button
+                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                    @click="goToEditPage">수정</button>
+                <button
+                    class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+                    @click="confirmDelete(team.no)">삭제</button>
             </div>
         </div>
     </div>
@@ -80,6 +88,7 @@ export default {
                 status: response.data.team.team.projectStatus,
             };
             project.value = response.data.project;
+            console.log(project.value);
 
             return axios
                 .get(`http://localhost:8087/team/leader-role`, config)
@@ -194,7 +203,7 @@ export default {
     align-items: center;
 }
 
-.space-x-4 > * + * {
+.space-x-4>*+* {
     margin-left: 1rem;
 }
 
@@ -225,7 +234,7 @@ export default {
 }
 
 /* Main Content */
-.space-y-6 > * + * {
+.space-y-6>*+* {
     margin-top: 1.5rem;
 }
 
