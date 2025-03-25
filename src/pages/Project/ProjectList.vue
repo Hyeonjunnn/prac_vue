@@ -112,14 +112,14 @@ export default {
     async fetchPostList() {
       // 기본 요청 파라미터
       const params = {
-        projectSortOption: this.postSortOption,
+        sortOption: this.postSortOption,
         page: this.page - 1, // 현재 페이지 번호 -1 (0 기반 인덱스)
         size: this.size,
       };
 
       // 검색 조건이 있을 경우 파라미터에 추가
       if (this.searchQuery && this.selectOption) {
-        params.option = this.selectOption;
+        params.searchOption = this.selectOption;
         params.keyword = this.searchQuery;
       }
 

@@ -12,7 +12,7 @@
           </option>
         </select>
       </div>
-      <div class="relative" v-if="selectOption.length > 1">
+      <div class="relative" v-if="selectOptions.length > 1">
         <select v-model="selectOption" class="select-box">
           <option v-for="option in selectOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
         </select>
