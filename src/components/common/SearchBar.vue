@@ -55,7 +55,6 @@ export default {
       postSortOption: this.postSortOptions[0].value,
       selectOption: this.selectOptions[0].value,
       searchQuery: "",
-      searchFalse: this.searchFalse,
     };
   },
   // 부모에게 보내는 값
