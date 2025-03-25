@@ -11,6 +11,9 @@
             <router-link to="/team/write">
                 <button class="category-button">팀 생성</button>
             </router-link>
+            <router-link to="/team/write">
+                <button class="category-button">내 팀</button>
+            </router-link>
         </div>
 
         <!-- 검색바 -->
@@ -78,7 +81,10 @@ export default {
             // 항목 개수
             sizeOptions: [10, 20, 30],
             // 정렬 옵션
-            postSortOptions: [{value: "LATEST", label: "최신순"}],
+            postSortOptions: [
+                {value: "LATEST", label: "전체"}
+
+            ],
             // 검색 옵션
             selectOptions: [
                 {value: "", label: "전체"},

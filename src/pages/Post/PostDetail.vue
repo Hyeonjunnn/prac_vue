@@ -3,7 +3,8 @@
     <div class="max-w-7xl w-full mx-auto p-4 bg-white">
       <!-- Author Section -->
       <div class="flex items-center space-x-4 mb-6">
-        <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar" class="w-12 h-12 rounded-full" />
+        <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar"
+          class="w-12 h-12 rounded-full" />
         <div>
           <h3 class="font-semibold">{{ post.userName }}</h3>
           <p class="text-gray-500 text-sm">
@@ -30,27 +31,21 @@
       <!-- 수정 삭제 -->
       <div>
         <br />
-        <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="goToEditPage">수정</button>
-        <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(post.postNo)">삭제</button>
+        <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+          @click="goToEditPage">수정</button>
+        <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+          @click="confirmDelete(post.postNo)">삭제</button>
       </div>
       <!-- 댓글 부분 -->
-      <div  v-if="post.boardType === 'FREE'">
+      <div v-if="post.boardType === 'FREE'">
         <br />
         <span>댓글 {{ post.commentCount }} 개</span>
         <br />
 
-        <CommentCreate
-            v-if="post.postNo"
-            :postNo="Number(post.postNo)"
-            @commentAdded="handleCommentAdded"
-        />
+        <CommentCreate v-if="post.postNo" :postNo="Number(post.postNo)" @commentAdded="handleCommentAdded" />
 
-        <CommentList
-            v-if="post.postNo"
-            ref="commentList"
-            :postNo="Number(post.postNo)"
-            @commentDeleted="handleCommentDeleted"
-        />
+        <CommentList v-if="post.postNo" ref="commentList" :postNo="Number(post.postNo)"
+          @commentDeleted="handleCommentDeleted" />
 
       </div>
     </div>
@@ -103,10 +98,10 @@ export default {
       }
     };
 
-    //상세 정보 가져와서 post에 넣음
-    axios.get(`http://localhost:8087/posts/${postNo}/with-comments`, initParams).then((response) => {
-      post.value = response.data;
-    });
+    // //상세 정보 가져와서 post에 넣음
+    // axios.get(`http://localhost:8087/posts/${postNo}/with-comments`, initParams).then((response) => {
+    //   post.value = response.data;
+    // });
 
     // 게시글 수정용 데이터
     const goToEditPage = () => {
@@ -184,7 +179,7 @@ export default {
   align-items: center;
 }
 
-.space-x-4 > * + * {
+.space-x-4>*+* {
   margin-left: 1rem;
 }
 
@@ -215,7 +210,7 @@ export default {
 }
 
 /* Main Content */
-.space-y-6 > * + * {
+.space-y-6>*+* {
   margin-top: 1.5rem;
 }
 
