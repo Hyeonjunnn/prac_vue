@@ -1,10 +1,10 @@
 <template>
-  <div class="row">
+  <div class="row" v-if="!autoSendActive">
     <div class="col p-3">
       <h2>쪽지 전송</h2>
     </div>
   </div>
-  <div class="row">
+  <div class="row" v-if="!autoSendActive">
     <div class="col">
       <div class="form-group">
         <label for="receiverId">받는 사람 ID :</label>
@@ -27,43 +27,46 @@
 </template>
 
 <script>
-import { inject, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, reactive, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { getUserInfo } from '@/utils/AuthUtil.js';
 
 export default {
   name: 'MessageCreate',
-  data() {
-    return {
-      messageItem: {
-        receiverUsername: '',
-        content: ''
-      }
-    };
-  },
   setup() {
     const router = useRouter();
-    return { router };
-  },
-  methods: {
-    async sendMessage() {
+    const route = useRoute();
+
+    // 📦 쪽지 내용 저장
+    const messageItem = reactive({
+      receiverUsername: '',
+      content: ''
+    });
+
+    // 자동전송 활성 여부
+    const autoSendActive = ref(false);
+
+    // 📤 전송 함수
+    const sendMessage = async () => {
+      console.log('[쪽지 전송 요청]', messageItem);
       try {
         const url = 'http://localhost:8087/messages';
-        const data = {
-          receiverUsername: this.messageItem.receiverUsername,
-          content: this.messageItem.content
-        };
         const token = getUserInfo().accessToken;
         const config = {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            Authorization: 'Bearer ' + token
           }
         };
+        const data = {
+          receiverUsername: messageItem.receiverUsername,
+          content: messageItem.content
+        };
+
+        console.log('쪽지 전송 요청:', data);
 
         const response = await axios.post(url, data, config);
-
         if (response.status === 200) {
           alert('쪽지가 전송되었습니다. 알림이 발송되었습니다.');
         } else {
@@ -72,10 +75,37 @@ export default {
       } catch (error) {
         alert('전송 에러 발생: ' + error);
       }
-    },
-    cancelMessage() {
-      this.router.back(); // 이전 페이지로 이동
-    }
+    };
+
+    // ❌ 취소
+    const cancelMessage = () => {
+      router.back();
+    };
+
+    // 🚀 자동 전송 로직
+    onMounted(async () => {
+      console.log('[자동 전송 시작]');
+      const receiver = route.query.receiver;
+      const content = route.query.content;
+      const autoSend = route.query.autoSend;
+
+      if (receiver) messageItem.receiverUsername = receiver;
+      if (content) messageItem.content = content;
+
+      if (receiver && content && autoSend === 'true') {
+        autoSendActive.value = true;
+        await sendMessage();
+        router.back();
+      }
+    });
+
+    return {
+      router,
+      messageItem,
+      sendMessage,
+      cancelMessage,
+      autoSendActive
+    };
   }
 };
 </script>
