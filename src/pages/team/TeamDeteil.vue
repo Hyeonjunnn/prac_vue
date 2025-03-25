@@ -1,214 +1,173 @@
 <template>
-    <div>
-        <div class="max-w-7xl w-full mx-auto p-4 bg-white">
-            <!-- Author Section -->
-            <div class="flex items-center space-x-4 mb-6">
-                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar"
-                    class="w-12 h-12 rounded-full" />
-                <div>
-                    <h3 class="font-semibold">{{ team.name }}</h3>
-                    <p class="text-gray-500 text-sm">
-                        {{ team.info }}
-                        {{ team.status }}
-                    </p>
-                </div>
-            </div>
-
-            <!-- 프로젝트 상세 -->
-            <div>
-                <ProjectInfo :project="project" v-if="project.name" />
-                <div class="space-y-6" v-else>
-                    <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
-                    <div v-if="isLeader">
-                        <router-link
-                            :to="{ name: 'ProjectWrite', query: { teamNo: team.no, projectNo: project && project.no } }">
-                            <button class="category-button">프로젝트 생성</button>
-                        </router-link>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 팀원 신청 버튼 -->
-            <div v-if="(team.status === 'OPEN') & !isLeader">
-                <button
-                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
-                    @click="confirmJoin(team.no)">가입 신청</button>
-            </div>
-            <!-- 팀 관리 -->
-            <div v-if="isMember">
-                <router-link
-                    :to="{ name: 'ScheduleList'}">
-                    <button class="category-button">팀 스케줄</button>
-                </router-link>
-            </div>
-
-            <!-- 수정 삭제 -->
-            <div v-if="isLeader">
-                <br />
-                <button
-                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
-                    @click="goToEditPage">수정</button>
-                <button
-                    class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
-                    @click="confirmDelete(team.no)">삭제</button>
-            </div>
-
+    <div class="max-w-7xl w-full mx-auto p-4 bg-white">
+      <!-- Author Section -->
+      <div class="flex items-center space-x-4 mb-6">
+        <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar" class="w-12 h-12 rounded-full" />
+        <div>
+          <h3 class="font-semibold">{{ team.name }}</h3>
+          <p class="text-gray-500 text-sm">{{ team.info }} {{ team.status }}</p>
         </div>
+      </div>
+  
+      <!-- 프로젝트 정보 -->
+      <div>
+        <ProjectInfo :project="project" v-if="project.name" />
+        <div class="space-y-6" v-else>
+          <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
+          <div v-if="isLeader">
+            <router-link :to="{ name: 'ProjectWrite', query: { teamNo: team.no } }">
+              <button class="category-button">프로젝트 생성</button>
+            </router-link>
+          </div>
+        </div>
+      </div>
+  
+      <!-- 가입 신청 -->
+      <div v-if="team.status === 'OPEN' && !isLeader">
+        <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                @click="confirmJoin(team.no)">
+          가입 신청
+        </button>
+      </div>
+  
+      <!-- 팀 스케줄 -->
+      <div v-if="isMember">
+        <router-link :to="{ name: 'ScheduleList', params: { teamNo: team.no } }">
+          <button class="category-button">팀 스케줄</button>
+        </router-link>
+      </div>
+  
+      <!-- 수정 삭제 -->
+      <div v-if="isLeader" class="mt-4">
+        <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500" @click="goToEditPage">수정</button>
+        <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300" @click="confirmDelete(team.no)">삭제</button>
+      </div>
     </div>
-</template>
-<script>
-import {useRoute, useRouter} from "vue-router";
-import {getUserInfo} from "@/utils/AuthUtil.js";
-import {ref} from "vue";
-import axios from "axios";
-import ProjectInfo from "@/components/project/ProjectInfo.vue";
-
-export default {
+  </template>
+  
+  <script>
+  import { useRoute, useRouter } from "vue-router";
+  import { getUserInfo } from "@/utils/AuthUtil.js";
+  import { ref } from "vue";
+  import axios from "axios";
+  import ProjectInfo from "@/components/project/ProjectInfo.vue";
+  
+  export default {
     name: "TeamDiteil",
-    components: {
-        ProjectInfo,
-    },
+    components: { ProjectInfo },
     setup() {
-        // 초기 데이터 설정
-        const route = useRoute(); // 현재 URL 정보 가져옴
-        const router = useRouter(); // 경로 이동 (라우트를 이동하거나 상태 변경할때 사용)
-        const teamNo = route.params.teamNo; // 경로에 포함된 번호를 가져옴
-        const team = ref({}); // 반응형 데이터 선언
-        const project = ref({});
-        const isLeader = ref(false); // 팀장 확인
-        const isMember = ref(false); // 팀원 확인
-
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + getUserInfo().accessToken,
-            },
-            params: {
-                teamNo: teamNo,
-            },
+      const route = useRoute();
+      const router = useRouter();
+      const teamNo = route.params.teamNo;
+      const team = ref({});
+      const project = ref({});
+      const isLeader = ref(false);
+      const isMember = ref(false);
+      const leaderUsername = ref("");
+  
+      const token = getUserInfo().accessToken;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        params: {
+          teamNo: teamNo,
+        },
+      };
+  
+      // 팀 정보
+      axios.get(`http://localhost:8087/team/${teamNo}`).then((res) => {
+        team.value = {
+          no: res.data.team.no,
+          name: res.data.team.team.teamName,
+          info: res.data.team.team.teamIntroduce,
+          status: res.data.team.team.projectStatus,
         };
-
-        // 상세 정보 가져와서 team에 넣음
-        axios.get(`http://localhost:8087/team/${teamNo}`).then((response) => {
-            team.value = {
-                no: response.data.team.no,
-                name: response.data.team.team.teamName,
-                info: response.data.team.team.teamIntroduce,
-                status: response.data.team.team.projectStatus,
-            };
-            project.value = response.data.project;
-            console.log(response.data);
-
-            return axios
-                .get(`http://localhost:8087/team/leader-role`, config)
-                .then((response) => {
-                        console.log(response.data);
-                        if(response.data.isLeader){
-                            isLeader.value = true;
-                            isMember.value = true;
-                            console.log('관리자 입니다.');
-                        }
-                        else if(response.data.isMember){
-                            isMember.value = true;
-                            console("유저입니다");
-                        }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+        project.value = res.data.project;
+      });
+  
+      // 리더/멤버 여부
+      axios.get(`http://localhost:8087/team/leader-role`, config).then((res) => {
+        if (res.data.isLeader) {
+          isLeader.value = true;
+          isMember.value = true;
+        } else if (res.data.isMember) {
+          isMember.value = true;
+        }
+      });
+  
+      // 리더 username
+      axios.get(`http://localhost:8087/team/${teamNo}/leader-username`, config).then((res) => {
+        leaderUsername.value = res.data;
+      });
+  
+      const goToEditPage = () => {
+        router.push({
+          name: "TeamWrite",
+          query: {
+            teamNo: team.value.no,
+            teamName: team.value.name,
+            teamIntroduce: team.value.info,
+            projectStatus: team.value.status,
+          },
         });
-
-        // 팀 수정용 데이터
-        const goToEditPage = () => {
-            router.push({
-                name: "TeamWrite",
-                query: {
-                    teamNo: team.value.no,
-                    teamName: team.value.name,
-                    teamIntroduce: team.value.info,
-                    projectStatus: team.value.status,
-                },
-            });
-        };
-
-        // 메소드 반환
-        return {
-            team,
-            project,
-            isLeader,
-            isMember,
-            goToEditPage,
-            // goToProjectCreatePage,
-        };
+      };
+  
+      return { team, project, isLeader, isMember, leaderUsername, goToEditPage };
     },
     methods: {
-        // 삭제 확인 창
-        confirmDelete(teamNo) {
-            if (confirm("정말로 삭제하시겠습니까?")) {
-                // 삭제 처리 로직 호출
-                this.deletePostData(teamNo);
-            }
-        },
-        // 팀 삭제
-        async deletePostData(teamNo) {
-            const url = `http://localhost:8087/team/${teamNo}`;
-            const token = getUserInfo().accessToken;
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
+      confirmDelete(teamNo) {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+          this.deletePostData(teamNo);
+        }
+      },
+      async deletePostData(teamNo) {
+        const token = getUserInfo().accessToken;
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        };
+        await axios.delete(`http://localhost:8087/team/${teamNo}`, config)
+          .then(() => {
+            alert("팀이 삭제되었습니다.");
+            this.$router.push("/team");
+          })
+          .catch((err) => alert(err.response.data.message));
+      },
+      confirmJoin(teamNo) {
+        if (confirm("해당 팀에 가입을 신청하시겠습니까?")) {
+          this.teamJoinRequest(teamNo);
+        }
+      },
+      async teamJoinRequest(teamNo) {
+        const token = getUserInfo().accessToken;
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        };
+        await axios.post(`http://localhost:8087/team/${teamNo}/join-request`, teamNo, config)
+          .then(async () => {
+            alert("가입 신청이 완료되었습니다!");
+  
+            const messageData = {
+              receiverUsername: this.leaderUsername,
+              content: `${this.team.no} 팀에 가입 신청했습니다. 검토 부탁드립니다.`,
             };
-            await axios
-                .delete(url, config)
-                .then(() => {
-                    alert("팀이 삭제되었습니다.");
-                    // 팀을 삭제한 후 기존 페이지로 돌려보냄
-                    this.$router.push("/team");
-                })
-                .catch((error) => {
-                    alert(error.response.data.message);
-                });
-        },
-
-        // 팀 가입 신청 확인 창
-        confirmJoin(teamNo) {
-            if (confirm("해당 팀에 가입을 신청하시겠습니까?")) {
-                this.teamJoinRequest(teamNo);
-            }
-        },
-
-        // 팀 가입 신청
-        async teamJoinRequest(teamNo) {
-            const url = `http://localhost:8087/team/${teamNo}/join-request`;
-            const token = getUserInfo().accessToken;
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-            };
-            await axios
-                .post(url, teamNo, config)
-                .then(() => {
-                    alert("가입 신청이 완료되었습니다!");
-                })
-                .catch((error) => {
-                    alert(error.response.data.message);
-                });
-        },
-
-        // goToProjectCreatePage(projectNo) {
-        //     this.$router.push({
-        //         name: "ProjectWrite",
-        //         query: {
-        //             teamNo: this.team.no,
-        //         },
-        //     });
-        // },
+            await axios.post("http://localhost:8087/messages", messageData, config)
+              .then(() => alert("쪽지가 자동으로 전송되었습니다!"))
+              .catch(err => alert("쪽지 전송 실패: " + (err.response?.data?.message || err.message)));
+          })
+          .catch(err => alert(err.response.data.message));
+      },
     },
-};
-</script>
+  };
+  </script>
+  
 
 <style scoped>
 /* Author Section */

@@ -2,9 +2,6 @@
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <span class="navbar-brand ps-2">TodoList App</span>
 
-    <!-- 🔔 알림 도착 문구 -->
-    <span v-if="showAlert" class="text-warning ms-3 fw-bold animate-blink">알림이 도착했어요!</span>
-
     <button class="navbar-toggler" type="button" @click="isNavShow = !isNavShow">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -24,7 +21,7 @@
           <router-link class="nav-link" to="/team"> 팀 </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/messages/list"> 쪽지 </router-link>
+          <router-link class="nav-link" to="/messages"> 쪽지 </router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/project"> 프로젝트 </router-link>
@@ -50,8 +47,16 @@
           <button class="btn btn-warning" @click="showNoti = !showNoti">🔔</button>
           <NotificationBox v-if="showNoti" class="position-absolute end-0 mt-2" />
         </li>
+        <li class="nav-item d-flex align-items-center">
+          <!-- 🔔 알림 도착 문구 -->
+          <span v-if="showAlert" class="text-warning ms-3 fw-bold animate-blink">
+            알림이 도착했어요!
+          </span>
+        </li>
+
       </ul>
     </div>
+
   </nav>
 </template>
 
@@ -77,9 +82,17 @@ onMounted(() => {
 
 <style scoped>
 @keyframes blink {
-  0%   { opacity: 1; }
-  50%  { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .animate-blink {

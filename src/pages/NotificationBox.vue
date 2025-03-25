@@ -15,28 +15,34 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { eventBus } from '@/libs/eventBus' // 👈 추가
+import { eventBus } from '@/libs/eventBus'
+import { getUserInfo } from '@/utils/AuthUtil.js'
+import { jwtDecode } from 'jwt-decode' // ✅ jwt-decode import
 
-const username = 'cc'
+// ✅ accessToken에서 username 뽑기
+const accessToken = getUserInfo().accessToken;
+const decoded = jwtDecode(accessToken);
+const username = decoded.username;
+
 const notifications = ref([])
 
 onMounted(async () => {
-  const res = await axios.get(`/api/notifications?username=${username}`)
+  const res = await axios.get(`http://localhost:8087/notifications?username=${username}`)
   notifications.value = res.data
 
-  const eventSource = new EventSource(`/api/notifications/subscribe?username=${username}`)
+  const eventSource = new EventSource(`http://localhost:8087/notifications/subscribe?username=${username}`)
   eventSource.addEventListener('notification', (event) => {
     const newNoti = JSON.parse(event.data)
     notifications.value.push(newNoti)
+    console.log('📩 newNoti:', newNoti)  // ✅ 이 줄 추가!
 
-    // 🔔 Header에 알림 이벤트 전달
     eventBus.emit('new-notification');
-    console.log('📡 이벤트 전송됨: new-notification') // 이거 추가!
+    console.log('📡 이벤트 전송됨: new-notification')
   })
 })
 
 const markAsRead = async (id) => {
-  await axios.post(`/notifications/${id}/read?username=${username}`)
+  await axios.post(`http://localhost:8087/notifications/${id}/read?username=${username}`)
   notifications.value = notifications.value.filter(n => n.id !== id)
 }
 </script>
