@@ -3,7 +3,8 @@
         <div class="max-w-7xl w-full mx-auto p-4 bg-white">
             <!-- Author Section -->
             <div class="flex items-center space-x-4 mb-6">
-                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar" class="w-12 h-12 rounded-full" />
+                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar"
+                    class="w-12 h-12 rounded-full" />
                 <div>
                     <h3 class="font-semibold">팀 / {{ project.teamName }}</h3>
                     <p class="text-gray-500 text-sm">번호 {{ project.no }}, 상태 {{ project.projectStatus }}</p>
@@ -14,26 +15,15 @@
             <div>
                 <ProjectInfo :project="project" v-if="project.name" />
             </div>
-            <!-- Tags 샘플로 남겨둠 -->
-            <!-- <div class="mt-8 flex flex-wrap gap-2">
-        <span
-          class="px-3 py-1 bg-gray-50 dark:bg-[#252731] rounded-full text-sm text-indigo-500"
-          >#WebDevelopment</span
-        >
-        <span
-          class="px-3 py-1 bg-gray-50 dark:bg-[#252731] rounded-full text-sm text-indigo-500"
-          >#Programming</span
-        >
-        <span
-          class="px-3 py-1 bg-gray-50 dark:bg-[#252731] rounded-full text-sm text-indigo-500"
-          >#TechTrends</span
-        >
-      </div> -->
             <!-- 수정 삭제 -->
             <div v-if="leader">
                 <br />
-                <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="goToEditPage">수정</button>
-                <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(project.no)">삭제</button>
+                <button
+                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                    @click="goToEditPage">수정</button>
+                <button
+                    class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+                    @click="confirmDelete(project.no)">삭제</button>
             </div>
             <span>조회수: {{ project.view }}</span>
         </div>
@@ -75,13 +65,17 @@ export default {
             .then((response) => {
                 if (response.status === 200) {
                     project.value = response.data;
+                    console.log(project.value);
                 }
                 return axios
                     .get(`http://localhost:8087/team/leader-role`, config)
                     .then((response) => {
                         if (response.status === 200) {
-                            leader.value = true; // 팀장 확인됨
+                            if(response.data.isLeader){
+                            leader.value = true;
                             teamNo.value = response.data.teamNo;
+                            }
+                            
                         }
                     })
                     .catch((error) => {
@@ -145,7 +139,8 @@ export default {
 <style scoped>
 /* 전체 컨테이너 */
 .max-w-7xl {
-    max-width: 80rem; /* 1280px */
+    max-width: 80rem;
+    /* 1280px */
 }
 
 .w-full {
@@ -158,7 +153,8 @@ export default {
 }
 
 .p-4 {
-    padding: 1rem; /* 16px */
+    padding: 1rem;
+    /* 16px */
 }
 
 .bg-white {
@@ -175,19 +171,23 @@ export default {
 }
 
 .space-x-4 {
-    margin-left: 1rem; /* 16px */
+    margin-left: 1rem;
+    /* 16px */
 }
 
 .mb-6 {
-    margin-bottom: 1.5rem; /* 24px */
+    margin-bottom: 1.5rem;
+    /* 24px */
 }
 
 .w-12 {
-    width: 3rem; /* 48px */
+    width: 3rem;
+    /* 48px */
 }
 
 .h-12 {
-    height: 3rem; /* 48px */
+    height: 3rem;
+    /* 48px */
 }
 
 .rounded-full {
@@ -203,19 +203,25 @@ export default {
 }
 
 .text-sm {
-    font-size: 0.875rem; /* 14px */
-    line-height: 1.25rem; /* 20px */
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.25rem;
+    /* 20px */
 }
 
 /* 메인 컨텐츠 */
 .space-y-6 {
-    margin-top: 1.5rem; /* 24px */
-    margin-bottom: 1.5rem; /* 24px */
+    margin-top: 1.5rem;
+    /* 24px */
+    margin-bottom: 1.5rem;
+    /* 24px */
 }
 
 .text-3xl {
-    font-size: 1.875rem; /* 30px */
-    line-height: 2.25rem; /* 36px */
+    font-size: 1.875rem;
+    /* 30px */
+    line-height: 2.25rem;
+    /* 36px */
 }
 
 .font-bold {
@@ -236,7 +242,8 @@ export default {
 
 /* 태그 (샘플) */
 .mt-8 {
-    margin-top: 2rem; /* 32px */
+    margin-top: 2rem;
+    /* 32px */
 }
 
 .flex-wrap {
@@ -244,17 +251,22 @@ export default {
 }
 
 .gap-2 {
-    gap: 0.5rem; /* 8px */
+    gap: 0.5rem;
+    /* 8px */
 }
 
 .px-3 {
-    padding-left: 0.75rem; /* 12px */
-    padding-right: 0.75rem; /* 12px */
+    padding-left: 0.75rem;
+    /* 12px */
+    padding-right: 0.75rem;
+    /* 12px */
 }
 
 .py-1 {
-    padding-top: 0.25rem; /* 4px */
-    padding-bottom: 0.25rem; /* 4px */
+    padding-top: 0.25rem;
+    /* 4px */
+    padding-bottom: 0.25rem;
+    /* 4px */
 }
 
 .bg-gray-50 {
@@ -279,7 +291,8 @@ export default {
 }
 
 .rounded-md {
-    border-radius: 0.375rem; /* 6px */
+    border-radius: 0.375rem;
+    /* 6px */
 }
 
 .hover\:bg-indigo-500:hover {

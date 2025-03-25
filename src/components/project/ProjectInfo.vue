@@ -8,7 +8,8 @@
             </div>
             <div class="detail-item">
                 <span class="detail-label">상태:</span>
-                <span class="detail-value" :class="[project.projectStatus === 'OPEN' ? 'status-open' : project.projectStatus === 'IN_PROGRESS' ? 'status-in-progress' : 'status-closed']">
+                <span class="detail-value"
+                    :class="[project.projectStatus === 'OPEN' ? 'status-open' : project.projectStatus === 'IN_PROGRESS' ? 'status-in-progress' : 'status-closed']">
                     {{ project.projectStatus }}
                 </span>
             </div>
@@ -17,6 +18,11 @@
                 <p class="detail-value content-text">
                     {{ project.content }}
                 </p>
+            </div>
+            <div>
+                <span v-for="tech in project.projectTeches" :key="tech.no" class="tech">
+                    {{ tech }}
+                </span>
             </div>
         </div>
         <router-link :to="`/project/${project.teamNo}`" v-if="project.teamNo">
@@ -144,5 +150,21 @@ defineProps({
 .view-more-button:hover {
     background-color: #2980b9;
     /* Darker blue on hover */
+}
+
+.tech {
+    margin-right: 8px;
+    /* 기술명 간 간격 */
+    padding: 4px 8px;
+    /* 기술명 내부 여백 */
+    background-color: #e0e0e0;
+    /* 기술명 배경색 */
+    border-radius: 15px;
+    /* 기술명 테두리 둥글게 */
+}
+
+.tech:last-child {
+    margin-right: 0;
+    /* 마지막 기술명 간 간격 제거 */
 }
 </style>

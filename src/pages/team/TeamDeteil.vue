@@ -3,7 +3,8 @@
         <div class="max-w-7xl w-full mx-auto p-4 bg-white">
             <!-- Author Section -->
             <div class="flex items-center space-x-4 mb-6">
-                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar" class="w-12 h-12 rounded-full" />
+                <img src="https://cdn.startupful.io/img/app_logo/no_img.png" alt="Author Avatar"
+                    class="w-12 h-12 rounded-full" />
                 <div>
                     <h3 class="font-semibold">{{ team.name }}</h3>
                     <p class="text-gray-500 text-sm">
@@ -18,8 +19,9 @@
                 <ProjectInfo :project="project" v-if="project.name" />
                 <div class="space-y-6" v-else>
                     <h2>아직 프로젝트가 생성되지 않았습니다.</h2>
-                    <div v-if="leader">
-                        <router-link :to="{name: 'ProjectWrite', query: {teamNo: team.no, projectNo: project && project.no}}">
+                    <div v-if="isLeader">
+                        <router-link
+                            :to="{ name: 'ProjectWrite', query: { teamNo: team.no, projectNo: project && project.no } }">
                             <button class="category-button">프로젝트 생성</button>
                         </router-link>
                     </div>
@@ -27,16 +29,30 @@
             </div>
 
             <!-- 팀원 신청 버튼 -->
-            <div v-if="(team.status === 'OPEN') & !leader">
-                <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="confirmJoin(team.no)">가입 신청</button>
+            <div v-if="(team.status === 'OPEN') & !isLeader">
+                <button
+                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                    @click="confirmJoin(team.no)">가입 신청</button>
+            </div>
+            <!-- 팀 관리 -->
+            <div v-if="isMember">
+                <router-link
+                    :to="{ name: 'ScheduleList'}">
+                    <button class="category-button">팀 스케줄</button>
+                </router-link>
             </div>
 
             <!-- 수정 삭제 -->
-            <div v-if="leader">
+            <div v-if="isLeader">
                 <br />
-                <button class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none" @click="goToEditPage">수정</button>
-                <button class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none" @click="confirmDelete(team.no)">삭제</button>
+                <button
+                    class="px-3 py-1 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
+                    @click="goToEditPage">수정</button>
+                <button
+                    class="px-3 py-1 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none"
+                    @click="confirmDelete(team.no)">삭제</button>
             </div>
+
         </div>
     </div>
 </template>
@@ -59,7 +75,8 @@ export default {
         const teamNo = route.params.teamNo; // 경로에 포함된 번호를 가져옴
         const team = ref({}); // 반응형 데이터 선언
         const project = ref({});
-        const leader = ref(false); // 팀장 확인
+        const isLeader = ref(false); // 팀장 확인
+        const isMember = ref(false); // 팀원 확인
 
         const config = {
             headers: {
@@ -80,16 +97,24 @@ export default {
                 status: response.data.team.team.projectStatus,
             };
             project.value = response.data.project;
+            console.log(response.data);
 
             return axios
                 .get(`http://localhost:8087/team/leader-role`, config)
                 .then((response) => {
-                    if (response.status === 200) {
-                        leader.value = true; // 팀장 확인됨
-                    }
+                        console.log(response.data);
+                        if(response.data.isLeader){
+                            isLeader.value = true;
+                            isMember.value = true;
+                            console.log('관리자 입니다.');
+                        }
+                        else if(response.data.isMember){
+                            isMember.value = true;
+                            console("유저입니다");
+                        }
                 })
                 .catch((error) => {
-                    console.log(error.response);
+                    console.log(error);
                 });
         });
 
@@ -110,7 +135,8 @@ export default {
         return {
             team,
             project,
-            leader,
+            isLeader,
+            isMember,
             goToEditPage,
             // goToProjectCreatePage,
         };
@@ -194,7 +220,7 @@ export default {
     align-items: center;
 }
 
-.space-x-4 > * + * {
+.space-x-4>*+* {
     margin-left: 1rem;
 }
 
@@ -225,7 +251,7 @@ export default {
 }
 
 /* Main Content */
-.space-y-6 > * + * {
+.space-y-6>*+* {
     margin-top: 1.5rem;
 }
 

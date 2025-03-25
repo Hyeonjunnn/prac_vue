@@ -11,21 +11,23 @@
                         <div class="grid grid-cols-1 gap-6 mt-4">
                             <div>
                                 <label class="text-gray-700" for="name">제목</label>
-                                <input class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" type="text" v-model="name" />
+                                <input
+                                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                                    type="text" v-model="name" />
                             </div>
 
                             <div>
                                 <label class="text-gray-700" for="content">내용</label>
-                                <textarea class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" v-model="content"></textarea>
+                                <textarea
+                                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                                    v-model="content"></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label htmlFor="projectStatus" class="text-gray-700">프로젝트 타입</label>
-                                <select
-                                    id="projectStatus"
+                                <select id="projectStatus"
                                     class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                                    v-model="projectStatus"
-                                >
+                                    v-model="projectStatus">
                                     <option value="OPEN">공개</option>
                                     <option value="CLOSED">닫힘</option>
                                     <option value="IN_PROGRESS">진행중</option>
@@ -33,12 +35,13 @@
                                 </select>
                             </div>
 
-                            <ProjectTechList @selectedTechNo="handleSelectedTechs" />
+                            <ProjectTechList :initialTechs="initialTechs" @selectedTechs="handleSelectedTechs" />
                             <p>선택된 기술 번호: {{ selectedTechs }}</p>
                         </div>
 
                         <div class="flex justify-end mt-4">
-                            <button type="submit" class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+                            <button type="submit"
+                                class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
                                 {{ isEditMode ? "수정" : "저장" }}
                             </button>
                         </div>
@@ -70,12 +73,11 @@ export default {
         const projectNo = ref(route.query.projectNo || null);
         const teamNo = ref(route.query.teamNo || null);
         const isEditMode = ref(!!route.query.name);
+        const initialTechs = ref(route.query.techsNo) // 초기 기술 번호 목록
         const selectedTechs = ref([]); // 선택된 기술 목록
-
-        console.log("수정 데이터 확인", route.query);
-
-        const handleSelectedTechs = (no) => {
-            selectedTechs.value = [...selectedTechs.value, no]; // 배열에 추가
+        
+        const handleSelectedTechs = (techs) => {
+            selectedTechs.value = techs.map(item => item.no);; // 기술 배열 갱신
         };
 
         const submitForm = () => {
@@ -84,9 +86,7 @@ export default {
                 content: content.value,
                 projectStatus: projectStatus.value,
                 teamNo: teamNo.value,
-                // techsNo: selectedTechs.value, // 선택된 기술 목록 추가
-                // techsNo: Array.isArray(selectedTechs.value) ? selectedTechs.value : [], // 배열로 변환
-                techsNo: [1], // 추후에 수정할 예정
+                techsNo: selectedTechs.value, // 선택된 기술 목록 추가
             };
 
             const config = {
@@ -122,6 +122,7 @@ export default {
             projectNo,
             isEditMode,
             selectedTechs,
+            initialTechs,
             submitForm,
             handleSelectedTechs,
         };

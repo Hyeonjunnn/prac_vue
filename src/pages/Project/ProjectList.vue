@@ -2,6 +2,12 @@
   <div>
     <!-- 분류바 -->
     <div class="category-bar">
+      <router-link to="/team">
+        <button class="category-button">팀</button>
+      </router-link>
+      <router-link to="/project">
+        <button class="category-button">프로젝트</button>
+      </router-link>
       <router-link to="/project/write">
         <button class="category-button">팀 생성</button>
       </router-link>
@@ -79,8 +85,8 @@ export default {
       // 검색 옵션
       selectOptions: [
         {value: "", label: "전체"},
-        {value: "TITLE", label: "제목"},
-        {value: "CONTENT", label: "내용"},
+        {value: "NAME", label: "프로젝트 명"},
+        {value: "CONTENT", label: "간단 소개"},
         {value: "PROJECT_TECHS", label: "기술명"},
       ],
     };
