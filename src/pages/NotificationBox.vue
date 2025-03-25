@@ -27,10 +27,10 @@ const username = decoded.username;
 const notifications = ref([])
 
 onMounted(async () => {
-  const res = await axios.get(`/api/notifications?username=${username}`)
+  const res = await axios.get(`http://localhost:8087/notifications?username=${username}`)
   notifications.value = res.data
 
-  const eventSource = new EventSource(`/api/notifications/subscribe?username=${username}`)
+  const eventSource = new EventSource(`http://localhost:8087/notifications/subscribe?username=${username}`)
   eventSource.addEventListener('notification', (event) => {
     const newNoti = JSON.parse(event.data)
     notifications.value.push(newNoti)
@@ -42,7 +42,7 @@ onMounted(async () => {
 })
 
 const markAsRead = async (id) => {
-  await axios.post(`/notifications/${id}/read?username=${username}`)
+  await axios.post(`http://localhost:8087/notifications/${id}/read?username=${username}`)
   notifications.value = notifications.value.filter(n => n.id !== id)
 }
 </script>
